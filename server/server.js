@@ -16,6 +16,9 @@ const proxyRoutes = require('./routes/proxy');
 
 const app = express();
 
+// Handle Vercel environment
+const isVercel = process.env.VERCEL === '1';
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -33,6 +36,10 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/portfolio
 .catch(err => console.error('MongoDB connection error:', err));
 
 // Routes
+app.get('/', (req, res) => {
+  res.json({ message: 'Portfolio API is running successfully!' });
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/skills', skillRoutes);
@@ -50,11 +57,12 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
-// Vercel serverless function export
-if (process.env.VERCEL) {
-  module.exports = app;
-} else {
+// Only listen to port if not in Vercel environment
+if (!isVercel) {
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
 }
+
+// Export for Vercel
+module.exports = app;
