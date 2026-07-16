@@ -7,6 +7,16 @@ const auth = require('../middleware/auth');
 
 const router = express.Router();
 
+const parseTechnologies = (tech) => {
+  if (!tech) return [];
+  if (Array.isArray(tech)) return tech;
+  if (typeof tech === 'string') {
+    return tech.split(',').map(t => t.trim()).filter(Boolean);
+  }
+  return [];
+};
+
+
 // Configure multer for image uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -77,13 +87,13 @@ router.post('/', auth, upload.single('image'), [
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { title, description, technologies, liveUrl, githubUrl, featured, order } = req.body;
+    const { title, description, technologies, liveUrl, githubUrl, featured, order, imageUrl } = req.body;
     
     const project = new Project({
       title,
       description,
-      technologies: technologies ? technologies.split(',').map(t => t.trim()) : [],
-      imageUrl: req.file ? `/uploads/${req.file.filename}` : '',
+      technologies: parseTechnologies(technologies),
+      imageUrl: req.file ? `/uploads/${req.file.filename}` : (imageUrl || ''),
       liveUrl: liveUrl || '',
       githubUrl: githubUrl || '',
       featured: featured || false,
@@ -100,7 +110,7 @@ router.post('/', auth, upload.single('image'), [
 // Update project (admin only)
 router.put('/:id', auth, upload.single('image'), async (req, res) => {
   try {
-    const { title, description, technologies, liveUrl, githubUrl, featured, order } = req.body;
+    const { title, description, technologies, liveUrl, githubUrl, featured, order, imageUrl } = req.body;
     
     const project = await Project.findById(req.params.id);
     if (!project) {
@@ -109,8 +119,12 @@ router.put('/:id', auth, upload.single('image'), async (req, res) => {
 
     project.title = title || project.title;
     project.description = description || project.description;
-    if (technologies) project.technologies = technologies.split(',').map(t => t.trim());
-    if (req.file) project.imageUrl = `/uploads/${req.file.filename}`;
+    if (technologies !== undefined) project.technologies = parseTechnologies(technologies);
+    if (req.file) {
+      project.imageUrl = `/uploads/${req.file.filename}`;
+    } else if (imageUrl !== undefined) {
+      project.imageUrl = imageUrl;
+    }
     if (liveUrl !== undefined) project.liveUrl = liveUrl;
     if (githubUrl !== undefined) project.githubUrl = githubUrl;
     if (featured !== undefined) project.featured = featured;

@@ -67,6 +67,8 @@ router.put('/', auth, upload.single('avatar'), async (req, res) => {
 
     if (req.file) {
       bio.avatarUrl = `/uploads/${req.file.filename}`;
+    } else if (req.body.avatarUrl !== undefined) {
+      bio.avatarUrl = req.body.avatarUrl;
     }
 
     if (socialLinks !== undefined) {
@@ -78,7 +80,10 @@ router.put('/', auth, upload.single('avatar'), async (req, res) => {
           parsedSocialLinks = {};
         }
       }
-      bio.socialLinks = { ...bio.socialLinks, ...parsedSocialLinks };
+      if (parsedSocialLinks.github !== undefined) bio.socialLinks.github = parsedSocialLinks.github;
+      if (parsedSocialLinks.linkedin !== undefined) bio.socialLinks.linkedin = parsedSocialLinks.linkedin;
+      if (parsedSocialLinks.twitter !== undefined) bio.socialLinks.twitter = parsedSocialLinks.twitter;
+      if (parsedSocialLinks.email !== undefined) bio.socialLinks.email = parsedSocialLinks.email;
     }
 
     await bio.save();

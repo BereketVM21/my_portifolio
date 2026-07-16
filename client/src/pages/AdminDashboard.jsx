@@ -3,6 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../utils/api';
 
+const convertToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+};
+
 const AdminDashboard = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
@@ -182,21 +191,22 @@ const AdminDashboard = () => {
       };
 
       const endpoint = endpoints[type];
-      const args = item._id ? [item._id, formData] : [formData];
 
-      // Handle file upload for projects
+      let submitData = { ...formData };
       if (type === 'projects' && formData.imageFile) {
-        const uploadFormData = new FormData();
-        Object.keys(formData).forEach(key => {
-          if (key !== 'imageFile') {
-            uploadFormData.append(key, formData[key]);
-          }
-        });
-        uploadFormData.append('image', formData.imageFile);
-        await endpoint(...args);
-      } else {
-        await endpoint(...args);
+        try {
+          const base64 = await convertToBase64(formData.imageFile);
+          submitData.imageUrl = base64;
+          delete submitData.imageFile;
+        } catch (err) {
+          console.error('Error converting project image to base64:', err);
+          alert('Failed to process image file');
+          return;
+        }
       }
+
+      const args = item._id ? [item._id, submitData] : [submitData];
+      await endpoint(...args);
 
       setShowModal(false);
       setEditingItem(null);
@@ -368,19 +378,16 @@ const AdminDashboard = () => {
                 <form onSubmit={async (e) => {
                   e.preventDefault();
                   try {
-                    let submitData;
+                    let submitData = { ...bioFormData };
                     if (avatarFile) {
-                      submitData = new FormData();
-                      submitData.append('name', bioFormData.name);
-                      submitData.append('location', bioFormData.location);
-                      submitData.append('heroTitle', bioFormData.heroTitle);
-                      submitData.append('heroSubtitle', bioFormData.heroSubtitle);
-                      submitData.append('aboutMe', bioFormData.aboutMe);
-                      submitData.append('resumeUrl', bioFormData.resumeUrl);
-                      submitData.append('socialLinks', JSON.stringify(bioFormData.socialLinks));
-                      submitData.append('avatar', avatarFile);
-                    } else {
-                      submitData = bioFormData;
+                      try {
+                        const base64 = await convertToBase64(avatarFile);
+                        submitData.avatarUrl = base64;
+                      } catch (err) {
+                        console.error('Error converting avatar to base64:', err);
+                        alert('Failed to process avatar image');
+                        return;
+                      }
                     }
                     await api.updateBio(submitData);
                     alert('Bio updated successfully');
