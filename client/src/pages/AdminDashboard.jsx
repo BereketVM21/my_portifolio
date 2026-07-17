@@ -389,7 +389,10 @@ const AdminDashboard = () => {
                         return;
                       }
                     }
-                    await api.updateBio(submitData);
+                    await api.updateBio({
+                      ...submitData,
+                      socialLinks: JSON.stringify(submitData.socialLinks)
+                    });
                     alert('Bio updated successfully');
                     setAvatarFile(null);
                     fetchData();

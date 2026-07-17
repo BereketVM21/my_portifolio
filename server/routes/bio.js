@@ -49,7 +49,14 @@ router.get('/', async (req, res) => {
 });
 
 // Update bio (admin only)
-router.put('/', auth, upload.single('avatar'), async (req, res) => {
+router.put('/', auth, (req, res, next) => {
+  upload.single('avatar')(req, res, (err) => {
+    if (err) {
+      console.error('Multer error:', err);
+    }
+    next();
+  });
+}, async (req, res) => {
   try {
     let bio = await Bio.findOne();
     if (!bio) {
