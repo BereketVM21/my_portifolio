@@ -24,11 +24,13 @@ const Experience = require('./models/Experience');
 
 const app = express();
 
-// Handle Vercel environment
-const isVercel = process.env.VERCEL === '1';
+
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: process.env.CLIENT_URL || '*',
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -180,12 +182,8 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
-// Only listen to port if not in Vercel environment
-if (!isVercel) {
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-}
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
-// Export for Vercel
 module.exports = app;
