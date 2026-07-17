@@ -17,30 +17,9 @@ const parseTechnologies = (tech) => {
 };
 
 
-// Configure multer for image uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'project-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
-
 const upload = multer({
-  storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-  fileFilter: (req, file, cb) => {
-    const allowedTypes = /jpeg|jpg|png|gif|webp/;
-    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = allowedTypes.test(file.mimetype);
-    
-    if (extname && mimetype) {
-      return cb(null, true);
-    }
-    cb(new Error('Only image files are allowed'));
-  }
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 }
 });
 
 // Get all projects (public)
@@ -93,7 +72,7 @@ router.post('/', auth, upload.single('image'), [
       title,
       description,
       technologies: parseTechnologies(technologies),
-      imageUrl: req.file ? `/uploads/${req.file.filename}` : (imageUrl || ''),
+      imageUrl: req.file ? `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}` : (imageUrl || ''),
       liveUrl: liveUrl || '',
       githubUrl: githubUrl || '',
       featured: featured || false,
@@ -121,7 +100,7 @@ router.put('/:id', auth, upload.single('image'), async (req, res) => {
     project.description = description || project.description;
     if (technologies !== undefined) project.technologies = parseTechnologies(technologies);
     if (req.file) {
-      project.imageUrl = `/uploads/${req.file.filename}`;
+      project.imageUrl = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
     } else if (imageUrl !== undefined) {
       project.imageUrl = imageUrl;
     }
