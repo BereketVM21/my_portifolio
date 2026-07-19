@@ -62,6 +62,57 @@ const Home = () => {
       {/* Windows 11 Desktop Overlay */}
       <OSDashboard bio={bio} skills={skills} projects={projects} />
 
+      {/* Navbar */}
+      <nav style={{
+        position: 'fixed',
+        top: 0,
+        right: 0,
+        left: 0,
+        zIndex: 999,
+        display: 'flex',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        padding: '16px 40px',
+        backgroundColor: 'rgba(0, 24, 48, 0.85)',
+        backdropFilter: 'blur(10px)',
+        borderBottom: '1px solid rgba(255,255,255,0.08)'
+      }}>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          {[
+            { label: 'About', href: '#about' },
+            { label: 'Skills', href: '#skills' },
+            { label: 'Projects', href: '#projects' },
+            { label: 'Experience', href: '#experience' },
+            { label: 'Education', href: '#education' },
+            { label: 'Contact', href: '#contact' },
+          ].map(link => (
+            <a
+              key={link.label}
+              href={link.href}
+              style={{
+                color: 'var(--text-secondary)',
+                textDecoration: 'none',
+                padding: '8px 14px',
+                borderRadius: '4px',
+                fontSize: '14px',
+                fontWeight: '500',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.color = '#fff';
+                e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.color = 'var(--text-secondary)';
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+      </nav>
+
       {/* Hero Section */}
       <section className="hero" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div className="container text-center">
