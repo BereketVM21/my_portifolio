@@ -114,7 +114,7 @@ const Home = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="hero" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <section className="hero" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#F5F5F5' }}>
         <div className="container text-center">
           <h1 style={{ fontSize: '3.5rem', marginBottom: '16px' }}>{bio?.heroTitle || 'Welcome to My Portfolio'}</h1>
           <p style={{ fontSize: '1.5rem', color: 'var(--text-secondary)', marginBottom: '32px' }}>
@@ -146,7 +146,7 @@ const Home = () => {
       </section>
 
       {/* About Section with OS Desktop Overlay */}
-      <section id="about" style={{ backgroundColor: 'var(--navy-dark)', position: 'relative', minHeight: '100vh' }}>
+      <section id="about" style={{ backgroundColor: '#F5F5F5', position: 'relative', minHeight: '100vh' }}>
         <div className="container">
           <h2 className="section-title">About Me</h2>
           <div className="card" style={{ maxWidth: '800px', margin: '0 auto', backgroundColor: 'var(--navy-primary)' }}>
@@ -161,7 +161,7 @@ const Home = () => {
       </section>
 
       {/* Skills Section */}
-      <section id="skills">
+      <section id="skills" style={{ backgroundColor: '#F5F5F5' }}>
         <div className="container">
           <h2 className="section-title">Skills</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
@@ -203,7 +203,7 @@ const Home = () => {
       </section>
 
       {/* Projects Section */}
-      <section id="projects" style={{ backgroundColor: 'var(--navy-dark)' }}>
+      <section id="projects" style={{ backgroundColor: '#F5F5F5' }}>
         <div className="container">
           <h2 className="section-title">Projects</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
@@ -258,7 +258,7 @@ const Home = () => {
       </section>
 
       {/* Experience Section */}
-      <section id="experience">
+      <section id="experience" style={{ backgroundColor: '#F5F5F5' }}>
         <div className="container">
           <h2 className="section-title">Experience & Education</h2>
           <div style={{ maxWidth: '800px', margin: '0 auto' }}>
@@ -281,7 +281,7 @@ const Home = () => {
       </section>
 
       {/* Education Section */}
-      <section id="education" style={{ backgroundColor: 'var(--navy-dark)' }}>
+      <section id="education" style={{ backgroundColor: '#F5F5F5' }}>
         <div className="container">
           <h2 className="section-title">Education</h2>
           <div style={{ maxWidth: '800px', margin: '0 auto' }}>
@@ -304,7 +304,7 @@ const Home = () => {
       </section>
 
       {/* Contact Section */}
-      <section id="contact">
+      <section id="contact" style={{ backgroundColor: '#F5F5F5' }}>
         <div className="container">
           <h2 className="section-title">Contact Me</h2>
           <div className="card" style={{ maxWidth: '600px', margin: '0 auto', backgroundColor: 'var(--navy-primary)' }}>

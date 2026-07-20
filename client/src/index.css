@@ -12,16 +12,16 @@
   --white-primary: #ffffff;
   --white-off: #f8f9fa;
   --white-muted: #e9ecef;
-  --text-primary: #ffffff;
-  --text-secondary: #e0e0e0;
-  --border-color: rgba(255, 255, 255, 0.1);
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --border-color: rgba(0, 0, 0, 0.1);
   --shadow: rgba(0, 0, 0, 0.3);
   --transition: all 0.3s ease;
 }
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: var(--navy-primary);
+  background-color: #F5F5F5;
   color: var(--text-primary);
   line-height: 1.6;
   min-height: 100vh;
