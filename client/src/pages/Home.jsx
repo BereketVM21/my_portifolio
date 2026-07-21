@@ -134,12 +134,12 @@ const Home = () => {
               gap: '48px'
             }}
           >
-            <div className="hero-text" style={{ flex: '1 1 0', minWidth: 0, overflow: 'hidden', position: 'relative', height: '120px', display: 'flex', alignItems: 'center' }}>
+            <div className="hero-text" style={{ flex: '1 1 0', minWidth: 0, overflow: 'hidden', position: 'relative', height: '120px', display: 'flex', alignItems: 'flex-end', paddingBottom: '12px' }}>
               <div style={{
                 whiteSpace: 'nowrap',
-                animation: 'marqueeHero 20s linear infinite',
+                animation: 'marqueeHero 80s linear infinite',
                 color: '#7F1734',
-                fontSize: '2.8rem',
+                fontSize: '3.8rem',
                 fontWeight: '900',
                 letterSpacing: '0.04em',
                 opacity: 0.92,
