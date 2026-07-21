@@ -134,16 +134,6 @@ const Home = () => {
               gap: '48px'
             }}
           >
-            <div className="hero-text" style={{ flex: '1 1 0', minWidth: 0 }}>
-              <h1 style={{ fontSize: '2.75rem', lineHeight: 1.15, marginBottom: '16px' }}>
-                {bio?.heroTitle || 'Welcome to My Portfolio'}
-              </h1>
-              <p style={{ fontSize: '1.25rem', color: 'var(--navy-light)', marginBottom: '24px' }}>
-                {bio?.heroSubtitle || 'Full Stack Developer'}
-              </p>
-
-            </div>
-
             <div
               className="hero-model"
               onClick={() => setOsOpen(true)}
