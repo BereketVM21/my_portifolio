@@ -171,11 +171,8 @@ function LaptopModel(props) {
     
     const t = state.clock.getElapsedTime();
     
-    // 1. Non-linear rotation: slow at front, fast at back
-    // Drive a linear angle then remap it so front face lingers, back rushes
-    const linearAngle = t * 0.15;
-    // sin-based easing: adds a forward-bias so front is slower, back is faster
-    group.current.rotation.y = linearAngle - 0.45 * Math.sin(2 * linearAngle);
+    // 1. Slow Auto-Rotation
+    group.current.rotation.y = t * 0.15;
     group.current.position.y = Math.sin(t * 0.8) * 0.08; // float
 
     // 2. Keep texture marked for update every frame
