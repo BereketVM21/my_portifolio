@@ -157,7 +157,9 @@ const Home = () => {
                 flex: '1 1 0',
                 minWidth: 0,
                 height: '480px',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                background: '#353839',
+                borderRadius: '12px',
               }}
             >
               <HeroLaptop />
