@@ -166,13 +166,19 @@ function LaptopModel(props) {
   }, [model, screenTexture, carbonBumpMap]);
 
   // Handle animation and canvas redrawing in the useFrame loop
-  useFrame((state) => {
+  useFrame((state, delta) => {
     if (!group.current) return;
     
     const t = state.clock.getElapsedTime();
     
-    // 1. Slow Auto-Rotation
-    group.current.rotation.y = t * 0.15;
+    // 1. Non-linear rotation: normal speed when screen faces viewer, 3x fast when screen is hidden
+    // Screen faces front at rotation.y = 0 (mod 2PI). cos(angle) = 1 at front, -1 at back.
+    // speedFactor: 1 at front, 3 at back, smooth transition via cosine
+    const baseSpeed = 0.15;
+    const angle = group.current.rotation.y;
+    const screenFacing = (Math.cos(angle) + 1) / 2; // 1 = fully facing, 0 = fully hidden
+    const speedFactor = 1 + 2 * (1 - screenFacing); // 1 at front, 3 at back
+    group.current.rotation.y += baseSpeed * speedFactor * delta;
     group.current.position.y = Math.sin(t * 0.8) * 0.08; // float
 
     // 2. Keep texture marked for update every frame
@@ -180,8 +186,8 @@ function LaptopModel(props) {
       // MeshBasicMaterial — no emissive needed, texture is always full brightness
     }
 
-    // 3. Detect Rotation Cycle (period is now ~41.89s with 0.15 speed)
-    const rotationPeriod = (Math.PI * 2) / 0.15; 
+    // 3. Detect Rotation Cycle based on actual rotation angle
+    const rotationPeriod = (Math.PI * 2) / 0.15;
     const halfPeriod = rotationPeriod / 2;
     const adjustedTime = t + halfPeriod;
     const currentMode = Math.floor(adjustedTime / rotationPeriod) % 3;
