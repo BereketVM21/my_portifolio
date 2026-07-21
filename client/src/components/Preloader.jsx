@@ -3,8 +3,8 @@ import { Canvas } from '@react-three/fiber';
 import { useGLTF, useAnimations, useProgress, Center } from '@react-three/drei';
 
 const MODEL_PATH = '/models/loading_animation.glb';
-const FADE_MS = 600; // must match the CSS transition duration below
-const MIN_VISIBLE_MS = 8000; // avoids a flash-of-nothing on fast/cached loads (minimum 8 seconds)
+const FADE_MS = 600;
+const MIN_VISIBLE_MS = 7000; // total preloader visible duration
 
 // Preload immediately so the request kicks off as soon as this module loads,
 // rather than waiting for the component to mount.
@@ -59,7 +59,7 @@ export default function Preloader({ onFinished }) {
   useEffect(() => {
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTimeRef.current;
-      let nextProgress = Math.floor((elapsed / 9000) * 100);
+      let nextProgress = Math.floor((elapsed / 6000) * 100); // reach 100% at 6s
 
       // Cap at 99% if the actual assets haven't fully loaded yet
       if (progress < 100) {
@@ -98,7 +98,7 @@ export default function Preloader({ onFinished }) {
         hasFinishedRef.current = true;
         setFadingOut(true);
       }
-    }, 11000);
+    }, 8000); // force fade after 8s max
 
     return () => clearTimeout(safetyTimer);
   }, []);
