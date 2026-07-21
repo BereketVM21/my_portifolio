@@ -60,8 +60,6 @@ const drawCodeLine = (ctx, line, x, y) => {
 function LaptopModel(props) {
   const group = useRef();
   const screenMatRef = useRef();
-  const keyboardMatRef = useRef();
-  const keyboardLightRef = useRef();
   const rotationCountRef = useRef(0);
   const lastAngleRef = useRef(0);
   
@@ -74,102 +72,6 @@ function LaptopModel(props) {
     const img = new Image();
     img.src = '/user_photo.jpg';
     return img;
-  }, []);
-
-  // Create the realistic keyboard canvas texture
-  const keyboardTexture = useMemo(() => {
-    const kc = document.createElement('canvas');
-    kc.width = 1024;
-    kc.height = 1024;
-    const kx = kc.getContext('2d');
-
-    // Fill entire canvas — dark aluminium base
-    kx.fillStyle = '#1a1a1a';
-    kx.fillRect(0, 0, 1024, 1024);
-
-    // Scale key layout to fill full 1024x1024
-    // 6 rows + fn row = 7 rows total, spread across full height
-    // Each row: h=120px, gap=14px, total rows area = 7*(120+14) = 938px, top pad = 43px
-    const ROW_H = 120;
-    const GAP = 14;
-    const TOP = 43;
-
-    // Key rows: [label, widthUnits]
-    const rows = [
-      { y: TOP,                  h: 80,    keys: [['Esc',1],['F1',1],['F2',1],['F3',1],['F4',1],['F5',1],['F6',1],['F7',1],['F8',1],['F9',1],['F10',1],['F11',1],['F12',1],['Del',1.5]] },
-      { y: TOP+94,               h: ROW_H, keys: [['`',1],['1',1],['2',1],['3',1],['4',1],['5',1],['6',1],['7',1],['8',1],['9',1],['0',1],['-',1],['=',1],['\u232b',1.5]] },
-      { y: TOP+94+ROW_H+GAP,     h: ROW_H, keys: [['Tab',1.5],['Q',1],['W',1],['E',1],['R',1],['T',1],['Y',1],['U',1],['I',1],['O',1],['P',1],['[',1],[']',1],['\\',1]] },
-      { y: TOP+94+(ROW_H+GAP)*2, h: ROW_H, keys: [['Caps',1.75],['A',1],['S',1],['D',1],['F',1],['G',1],['H',1],['J',1],['K',1],['L',1],[';',1],["'",1],['\u21b5',1.75]] },
-      { y: TOP+94+(ROW_H+GAP)*3, h: ROW_H, keys: [['\u21e7',2.25],['Z',1],['X',1],['C',1],['V',1],['B',1],['N',1],['M',1],[',',1],['.',1],['/',1],['\u21e7',2.25]] },
-      { y: TOP+94+(ROW_H+GAP)*4, h: ROW_H, keys: [['Ctrl',1.25],['\u2756',1],['Alt',1.25],['',6.25],['Alt',1.25],['Fn',1],['Ctrl',1.25]] },
-    ];
-
-    // Total key units per row = ~14.5 units; map to 1024px with 20px side padding
-    const TOTAL_UNITS = 14.5;
-    const SIDE_PAD = 20;
-    const UNIT = (1024 - SIDE_PAD * 2) / TOTAL_UNITS;
-
-    const accentKeys = {
-      'Esc':'#ff4444','\u232b':'#ff4444',
-      'Tab':'#4488ff','Caps':'#4488ff','\u21e7':'#4488ff','Ctrl':'#4488ff','Alt':'#4488ff','Fn':'#4488ff',
-      '\u21b5':'#44ff88',
-      'F1':'#ff6644','F2':'#ff6644','F3':'#ff6644','F4':'#ff6644',
-      'F5':'#44aaff','F6':'#44aaff','F7':'#44aaff','F8':'#44aaff',
-      'F9':'#aa44ff','F10':'#aa44ff','F11':'#aa44ff','F12':'#aa44ff',
-    };
-
-    rows.forEach(({ y, h, keys }) => {
-      let x = SIDE_PAD;
-      keys.forEach(([label, units]) => {
-        const w = units * UNIT;
-        const accent = accentKeys[label];
-
-        // Key body (dark)
-        kx.fillStyle = '#252528';
-        kx.beginPath();
-        kx.roundRect(x, y, w - GAP, h - GAP, 8);
-        kx.fill();
-
-        // Top face (lighter — 3D raised)
-        kx.fillStyle = '#38383e';
-        kx.beginPath();
-        kx.roundRect(x + 2, y + 2, w - GAP - 4, h - GAP - 8, 6);
-        kx.fill();
-
-        // Bottom shadow edge
-        kx.fillStyle = '#0d0d10';
-        kx.beginPath();
-        kx.roundRect(x + 2, y + h - GAP - 7, w - GAP - 4, 5, [0,0,6,6]);
-        kx.fill();
-
-        // Backlight glow tint
-        kx.fillStyle = accent ? accent + '28' : '#a0c4ff14';
-        kx.beginPath();
-        kx.roundRect(x + 2, y + 2, w - GAP - 4, h - GAP - 8, 6);
-        kx.fill();
-
-        // Label
-        if (label) {
-          const fontSize = label.length > 3 ? 18 : label.length > 1 ? 22 : 28;
-          kx.font = `bold ${fontSize}px Arial, sans-serif`;
-          kx.fillStyle = accent || '#c8d8ff';
-          kx.textAlign = 'center';
-          kx.textBaseline = 'middle';
-          kx.shadowColor = accent || '#a0c4ff';
-          kx.shadowBlur = accent ? 10 : 5;
-          kx.fillText(label, x + (w - GAP) / 2, y + (h - GAP) / 2 - 2);
-          kx.shadowBlur = 0;
-        }
-
-        x += w;
-      });
-    });
-
-    const tex = new THREE.CanvasTexture(kc);
-    tex.flipY = false;
-    tex.minFilter = THREE.LinearFilter;
-    tex.magFilter = THREE.LinearFilter;
-    return tex;
   }, []);
 
   // Create the dynamic 2D canvas texture
@@ -250,24 +152,19 @@ function LaptopModel(props) {
               bumpScale: 0.002,
             });
           } else if (matName === '03___Default') {
-            // Keyboard — realistic texture with per-key labels and RGB lighting
-            const kbMat = new THREE.MeshStandardMaterial({
-              map: keyboardTexture,
-              roughness: 0.55,
-              metalness: 0.1,
-              emissiveMap: keyboardTexture,
-              emissive: new THREE.Color('#a0c4ff'),
-              emissiveIntensity: 0.18,
+            // Keyboard area — standard dark material without keyboard texture
+            child.material = new THREE.MeshStandardMaterial({
+              color: new THREE.Color('#1a1a1a'),
+              roughness: 0.6,
+              metalness: 0.2,
             });
-            child.material = kbMat;
-            keyboardMatRef.current = kbMat;
           }
         }
       }
     });
 
     return { centeredModel: model, scale: targetSize / maxDim };
-  }, [model, screenTexture, carbonBumpMap, keyboardTexture]);
+  }, [model, screenTexture, carbonBumpMap]);
 
   // Handle animation and canvas redrawing in the useFrame loop
   useFrame((state, delta) => {
@@ -297,15 +194,7 @@ function LaptopModel(props) {
     // cycleTime: how far into the current rotation we are (0 → 2π mapped to seconds)
     const cycleTime = (newMod / TWO_PI) * (TWO_PI / baseSpeed);
 
-    // 3. Animate keyboard backlight — subtle breathing glow
-    if (keyboardMatRef.current) {
-      keyboardMatRef.current.emissiveIntensity = 0.2 + Math.sin(t * 1.2) * 0.08;
-    }
-    if (keyboardLightRef.current) {
-      keyboardLightRef.current.intensity = 0.15 + Math.sin(t * 1.2) * 0.05;
-    }
-
-    // 4. Redraw Canvas Screen Content
+    // 3. Redraw Canvas Screen Content
     ctx.clearRect(0, 0, 1024, 768);
 
     if (currentMode === 1) {
@@ -715,15 +604,6 @@ function LaptopModel(props) {
     <group ref={group} {...props}>
       <group scale={scale}>
         <primitive object={centeredModel} />
-        {/* Keyboard backlight point light — positioned just above the keyboard deck */}
-        <pointLight
-          ref={keyboardLightRef}
-          position={[0, -0.3, 0.6]}
-          color="#a0c4ff"
-          intensity={0.15}
-          distance={1.2}
-          decay={2}
-        />
       </group>
     </group>
   );
