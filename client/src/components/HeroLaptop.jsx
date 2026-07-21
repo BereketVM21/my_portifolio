@@ -62,6 +62,8 @@ function LaptopModel(props) {
   const screenMatRef = useRef();
   const keyboardMatRef = useRef();
   const keyboardLightRef = useRef();
+  const rotationCountRef = useRef(0);
+  const lastAngleRef = useRef(0);
   
   // Load the 3D model
   const { scene } = useGLTF('/models/laptop.glb');
@@ -278,25 +280,30 @@ function LaptopModel(props) {
     // speedFactor: 1 at front, 3 at back, smooth transition via cosine
     const baseSpeed = 0.15;
     const angle = group.current.rotation.y;
-    const screenFacing = (Math.cos(angle) + 1) / 2; // 1 = fully facing, 0 = fully hidden
-    const speedFactor = 1 + 2 * (1 - screenFacing); // 1 at front, 3 at back
+    const screenFacing = (Math.cos(angle) + 1) / 2;
+    const speedFactor = 1 + 2 * (1 - screenFacing);
     group.current.rotation.y += baseSpeed * speedFactor * delta;
-    group.current.position.y = Math.sin(t * 0.8) * 0.08; // float
+    group.current.position.y = Math.sin(t * 0.8) * 0.08;
 
-    // 2. Animate keyboard backlight — subtle breathing glow
+    // 2. Count completed full rotations (each 2π crossing = new mode)
+    const TWO_PI = Math.PI * 2;
+    const newAngle = group.current.rotation.y;
+    const prevMod = lastAngleRef.current % TWO_PI;
+    const newMod = newAngle % TWO_PI;
+    if (prevMod > newMod) rotationCountRef.current += 1; // crossed 2π boundary
+    lastAngleRef.current = newAngle;
+
+    const currentMode = rotationCountRef.current % 3;
+    // cycleTime: how far into the current rotation we are (0 → 2π mapped to seconds)
+    const cycleTime = (newMod / TWO_PI) * (TWO_PI / baseSpeed);
+
+    // 3. Animate keyboard backlight — subtle breathing glow
     if (keyboardMatRef.current) {
       keyboardMatRef.current.emissiveIntensity = 0.2 + Math.sin(t * 1.2) * 0.08;
     }
     if (keyboardLightRef.current) {
       keyboardLightRef.current.intensity = 0.15 + Math.sin(t * 1.2) * 0.05;
     }
-
-    // 3. Detect Rotation Cycle based on actual rotation angle
-    const rotationPeriod = (Math.PI * 2) / 0.15;
-    const halfPeriod = rotationPeriod / 2;
-    const adjustedTime = t + halfPeriod;
-    const currentMode = Math.floor(adjustedTime / rotationPeriod) % 3;
-    const cycleTime = adjustedTime % rotationPeriod;
 
     // 4. Redraw Canvas Screen Content
     ctx.clearRect(0, 0, 1024, 768);
