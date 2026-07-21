@@ -134,14 +134,19 @@ const Home = () => {
               gap: '48px'
             }}
           >
-            <div className="hero-text" style={{ flex: '1 1 0', minWidth: 0 }}>
-              <h1 style={{ fontSize: '2.75rem', lineHeight: 1.15, marginBottom: '16px' }}>
-                {bio?.heroTitle || 'Welcome to My Portfolio'}
-              </h1>
-              <p style={{ fontSize: '1.25rem', color: 'var(--navy-light)', marginBottom: '24px' }}>
-                {bio?.heroSubtitle || 'Full Stack Developer'}
-              </p>
-
+            <div className="hero-text" style={{ flex: '1 1 0', minWidth: 0, overflow: 'hidden', position: 'relative', height: '120px', display: 'flex', alignItems: 'center' }}>
+              <div style={{
+                whiteSpace: 'nowrap',
+                animation: 'marqueeHero 20s linear infinite',
+                color: '#7F1734',
+                fontSize: '2.8rem',
+                fontWeight: '900',
+                letterSpacing: '0.04em',
+                opacity: 0.92,
+                display: 'inline-block',
+              }}>
+                Bereket Alemu — Full Stack Website Developer &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Bereket Alemu — Full Stack Website Developer &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              </div>
             </div>
 
             <div
@@ -161,6 +166,10 @@ const Home = () => {
         </div>
 
         <style>{`
+          @keyframes marqueeHero {
+            0%   { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+          }
           @media (max-width: 900px) {
             .hero-grid {
               flex-direction: column;
