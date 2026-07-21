@@ -301,8 +301,8 @@ function LaptopModel(props) {
     // 4. Redraw Canvas Screen Content
     ctx.clearRect(0, 0, 1024, 768);
 
-    if (currentMode === 0) {
-      // --- MODE 0: VS CODE CODE TYPING ---
+    if (currentMode === 1) {
+      // --- MODE 1: VS CODE CODE TYPING ---
       // Editor Background
       ctx.fillStyle = '#1e1e1e';
       ctx.fillRect(0, 0, 1024, 768);
@@ -411,20 +411,20 @@ function LaptopModel(props) {
       ctx.fillText('LF  UTF-8  JavaScript  Ln 12, Col 4', 800, 738);
       ctx.fillText('master*', 210, 738);
 
-    } else if (currentMode === 1) {
-      // --- MODE 1: SCROLLING PORTFOLIO WEBSITE ---
+    } else if (currentMode === 2) {
+      // --- MODE 2: SCROLLING PORTFOLIO WEBSITE ---
       // Web Background (Slate 900)
       ctx.fillStyle = '#0f172a';
       ctx.fillRect(0, 0, 1024, 768);
 
-      // Scroll physics: scroll from Y=0 to Y=800 over 16s, scroll back up in 5s
+      // Scroll physics: fast scroll — reaches bottom in 6s, snaps back in 2s
       let scrollY = 0;
-      if (cycleTime < 2) {
+      if (cycleTime < 1) {
         scrollY = 0;
-      } else if (cycleTime < 18) {
-        scrollY = ((cycleTime - 2) / 16) * 800;
+      } else if (cycleTime < 7) {
+        scrollY = ((cycleTime - 1) / 6) * 800;
       } else {
-        scrollY = Math.max(0, 800 - ((cycleTime - 18) / 5) * 800);
+        scrollY = Math.max(0, 800 - ((cycleTime - 7) / 2) * 800);
       }
 
       // 1. HERO SECTION (Y = 0 to 500)
@@ -585,8 +585,8 @@ function LaptopModel(props) {
       ctx.stroke();
       ctx.restore();
 
-    } else if (currentMode === 2) {
-      // --- MODE 2: USER PHOTO & HUD INTERFACE ---
+    } else if (currentMode === 0) {
+      // --- MODE 0: USER PHOTO & HUD INTERFACE ---
       // Background (Very dark warm tone)
       ctx.fillStyle = '#0f0e15';
       ctx.fillRect(0, 0, 1024, 768);
@@ -671,13 +671,16 @@ function LaptopModel(props) {
       // Bottom Portrait styled label
       ctx.textAlign = 'center';
       ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 36px Arial, sans-serif';
-      ctx.fillText('BEREKET VM', 512, 680);
-      
+      ctx.font = 'bold 40px Arial, sans-serif';
+      ctx.shadowColor = '#f97316';
+      ctx.shadowBlur = 18;
+      ctx.fillText('BEREKET ALEMU', 512, 675);
+      ctx.shadowBlur = 0;
+
       ctx.fillStyle = '#f97316';
       ctx.font = 'bold 15px Arial, sans-serif';
       const sub = 'FULL STACK DEVELOPER & 3D ARTIST';
-      ctx.fillText(sub.split('').join(' '), 512, 715);
+      ctx.fillText(sub.split('').join(' '), 512, 712);
       ctx.textAlign = 'left'; // reset
     }
 
