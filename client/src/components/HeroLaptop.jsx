@@ -139,7 +139,7 @@ function LaptopModel(props) {
               metalness: 0.1,
               emissive: new THREE.Color('#ffffff'),
               emissiveMap: screenTexture,
-              emissiveIntensity: 0.8,
+              emissiveIntensity: 1.8,
             });
             child.material = screenMat;
             screenMatRef.current = screenMat; // Keep reference to animate emissive intensity
@@ -181,7 +181,7 @@ function LaptopModel(props) {
 
     // 2. Pulse Screen Backlight (increased base brightness to 1.35 for better visibility)
     if (screenMatRef.current) {
-      screenMatRef.current.emissiveIntensity = 1.35 + Math.sin(t * 1.5) * 0.08;
+      screenMatRef.current.emissiveIntensity = 3.0 + Math.sin(t * 1.5) * 0.1;
     }
 
     // 3. Detect Rotation Cycle (period is now ~41.89s with 0.15 speed)
@@ -626,9 +626,10 @@ export default function HeroLaptop({ className = '', style = {} }) {
         gl={{ alpha: true, antialias: true }}
         style={{ background: 'transparent' }}
       >
-        <ambientLight intensity={0.6} />
-        <directionalLight position={[3, 4, 5]} intensity={1.4} />
-        <directionalLight position={[-4, -2, -3]} intensity={0.3} />
+        <ambientLight intensity={1.2} />
+        <directionalLight position={[3, 4, 5]} intensity={2.5} />
+        <directionalLight position={[-4, -2, -3]} intensity={0.8} />
+        <directionalLight position={[0, 5, 0]} intensity={1.5} />
 
         <Suspense fallback={<Loader />}>
           <LaptopModel />
