@@ -132,17 +132,13 @@ function LaptopModel(props) {
           const matName = child.material.name;
           
           if (matName === '02___Default') {
-            // Screen Display
-            const screenMat = new THREE.MeshStandardMaterial({
+            // Screen Display — MeshBasicMaterial is unaffected by lights/reflections
+            const screenMat = new THREE.MeshBasicMaterial({
               map: screenTexture,
-              roughness: 0.15,
-              metalness: 0.1,
-              emissive: new THREE.Color('#ffffff'),
-              emissiveMap: screenTexture,
-              emissiveIntensity: 0.8,
+              toneMapped: false,
             });
             child.material = screenMat;
-            screenMatRef.current = screenMat; // Keep reference to animate emissive intensity
+            screenMatRef.current = screenMat;
           } else if (matName === '_crayfishdiffuse') {
             // Laptop deck & casing
             child.material = new THREE.MeshStandardMaterial({
@@ -179,9 +175,9 @@ function LaptopModel(props) {
     group.current.rotation.y = t * 0.15;
     group.current.position.y = Math.sin(t * 0.8) * 0.08; // float
 
-    // 2. Pulse Screen Backlight (increased base brightness to 1.35 for better visibility)
+    // 2. Keep texture marked for update every frame
     if (screenMatRef.current) {
-      screenMatRef.current.emissiveIntensity = 1.35 + Math.sin(t * 1.5) * 0.1;
+      // MeshBasicMaterial — no emissive needed, texture is always full brightness
     }
 
     // 3. Detect Rotation Cycle (period is now ~41.89s with 0.15 speed)
@@ -626,13 +622,12 @@ export default function HeroLaptop({ className = '', style = {} }) {
         gl={{ alpha: true, antialias: true }}
         style={{ background: 'transparent' }}
       >
-        <ambientLight intensity={0.6} />
-        <directionalLight position={[3, 4, 5]} intensity={1.4} />
-        <directionalLight position={[-4, -2, -3]} intensity={0.3} />
+        <ambientLight intensity={0.8} />
+        <directionalLight position={[3, 4, 5]} intensity={1.2} />
+        <directionalLight position={[-4, -2, -3]} intensity={0.4} />
 
         <Suspense fallback={<Loader />}>
           <LaptopModel />
-          <Environment preset="city" />
         </Suspense>
 
         <ContactShadows
