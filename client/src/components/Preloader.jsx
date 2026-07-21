@@ -4,7 +4,7 @@ import { useGLTF, useAnimations, useProgress, Center } from '@react-three/drei';
 
 const MODEL_PATH = '/models/loading_animation.glb';
 const FADE_MS = 600;
-const MIN_VISIBLE_MS = 7000; // total preloader visible duration
+const MIN_VISIBLE_MS = 6000; // total preloader visible duration
 
 // Preload immediately so the request kicks off as soon as this module loads,
 // rather than waiting for the component to mount.
@@ -59,7 +59,7 @@ export default function Preloader({ onFinished }) {
   useEffect(() => {
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTimeRef.current;
-      let nextProgress = Math.floor((elapsed / 6000) * 100); // reach 100% at 6s
+      let nextProgress = Math.floor((elapsed / 5000) * 100); // reach 100% at 5s
 
       // Cap at 99% if the actual assets haven't fully loaded yet
       if (progress < 100) {
@@ -98,7 +98,7 @@ export default function Preloader({ onFinished }) {
         hasFinishedRef.current = true;
         setFadingOut(true);
       }
-    }, 8000); // force fade after 8s max
+    }, 7000); // force fade after 7s max
 
     return () => clearTimeout(safetyTimer);
   }, []);
