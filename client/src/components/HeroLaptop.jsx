@@ -60,6 +60,8 @@ const drawCodeLine = (ctx, line, x, y) => {
 function LaptopModel(props) {
   const group = useRef();
   const screenMatRef = useRef();
+  const keyboardMatRef = useRef();
+  const keyboardLightRef = useRef();
   
   // Load the 3D model
   const { scene } = useGLTF('/models/laptop.glb');
@@ -150,13 +152,15 @@ function LaptopModel(props) {
             });
           } else if (matName === '03___Default') {
             // Keyboard keys
-            child.material = new THREE.MeshStandardMaterial({
+            const kbMat = new THREE.MeshStandardMaterial({
               color: new THREE.Color('#1c1c1c'),
               roughness: 0.6,
               metalness: 0.15,
-              emissive: new THREE.Color('#ffffff'),
-              emissiveIntensity: 0.2, // Keyboard backlight glow
+              emissive: new THREE.Color('#a0c4ff'),
+              emissiveIntensity: 0.25,
             });
+            child.material = kbMat;
+            keyboardMatRef.current = kbMat;
           }
         }
       }
@@ -181,9 +185,12 @@ function LaptopModel(props) {
     group.current.rotation.y += baseSpeed * speedFactor * delta;
     group.current.position.y = Math.sin(t * 0.8) * 0.08; // float
 
-    // 2. Keep texture marked for update every frame
-    if (screenMatRef.current) {
-      // MeshBasicMaterial — no emissive needed, texture is always full brightness
+    // 2. Animate keyboard backlight — subtle breathing glow
+    if (keyboardMatRef.current) {
+      keyboardMatRef.current.emissiveIntensity = 0.2 + Math.sin(t * 1.2) * 0.08;
+    }
+    if (keyboardLightRef.current) {
+      keyboardLightRef.current.intensity = 0.15 + Math.sin(t * 1.2) * 0.05;
     }
 
     // 3. Detect Rotation Cycle based on actual rotation angle
@@ -600,6 +607,15 @@ function LaptopModel(props) {
     <group ref={group} {...props}>
       <group scale={scale}>
         <primitive object={centeredModel} />
+        {/* Keyboard backlight point light — positioned just above the keyboard deck */}
+        <pointLight
+          ref={keyboardLightRef}
+          position={[0, -0.3, 0.6]}
+          color="#a0c4ff"
+          intensity={0.15}
+          distance={1.2}
+          decay={2}
+        />
       </group>
     </group>
   );
