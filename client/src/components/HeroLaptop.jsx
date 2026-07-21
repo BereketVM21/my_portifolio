@@ -74,6 +74,128 @@ function LaptopModel(props) {
     return img;
   }, []);
 
+  // Create the realistic keyboard canvas texture
+  const keyboardTexture = useMemo(() => {
+    const kc = document.createElement('canvas');
+    kc.width = 1024;
+    kc.height = 320;
+    const kx = kc.getContext('2d');
+
+    // Base plate — dark aluminium
+    kx.fillStyle = '#1a1a1a';
+    kx.fillRect(0, 0, 1024, 320);
+
+    // Key layout: rows of [label, widthUnits] — 1 unit = 42px, gap = 5px
+    const UNIT = 42;
+    const GAP = 5;
+    const ROW_H = 42;
+    const rows = [
+      // Row 0 — Function row (smaller)
+      { y: 8, h: 28, keys: [
+        ['Esc',1],['F1',1],['F2',1],['F3',1],['F4',1],['F5',1],['F6',1],
+        ['F7',1],['F8',1],['F9',1],['F10',1],['F11',1],['F12',1],['Del',1.5]
+      ]},
+      // Row 1 — Number row
+      { y: 44, h: ROW_H, keys: [
+        ['`',1],['1',1],['2',1],['3',1],['4',1],['5',1],['6',1],['7',1],
+        ['8',1],['9',1],['0',1],['-',1],['=',1],['⌫',1.5]
+      ]},
+      // Row 2 — QWERTY
+      { y: 91, h: ROW_H, keys: [
+        ['Tab',1.5],['Q',1],['W',1],['E',1],['R',1],['T',1],['Y',1],['U',1],
+        ['I',1],['O',1],['P',1],['[',1],[']',1],['\\',1]
+      ]},
+      // Row 3 — ASDF
+      { y: 138, h: ROW_H, keys: [
+        ['Caps',1.75],['A',1],['S',1],['D',1],['F',1],['G',1],['H',1],['J',1],
+        ['K',1],['L',1],[';',1],["'",1],['↵',1.75]
+      ]},
+      // Row 4 — ZXCV
+      { y: 185, h: ROW_H, keys: [
+        ['⇧',2.25],['Z',1],['X',1],['C',1],['V',1],['B',1],['N',1],['M',1],
+        [',',1],['.',1],['/',1],['⇧',2.25]
+      ]},
+      // Row 5 — Bottom
+      { y: 232, h: ROW_H, keys: [
+        ['Ctrl',1.25],['❖',1],['Alt',1.25],['',6.25],['Alt',1.25],['Fn',1],['Ctrl',1.25]
+      ]},
+    ];
+
+    // Per-key RGB accent colors for a few special keys (like a gaming keyboard)
+    const accentKeys = {
+      'Esc': '#ff4444', 'Tab': '#4488ff', 'Caps': '#4488ff',
+      '⇧': '#4488ff', 'Ctrl': '#4488ff', 'Alt': '#4488ff',
+      'Enter': '#44ff88', '↵': '#44ff88', '⌫': '#ff4444',
+      'F1':'#ff6644','F2':'#ff6644','F3':'#ff6644','F4':'#ff6644',
+      'F5':'#44aaff','F6':'#44aaff','F7':'#44aaff','F8':'#44aaff',
+      'F9':'#aa44ff','F10':'#aa44ff','F11':'#aa44ff','F12':'#aa44ff',
+    };
+
+    rows.forEach(({ y, h, keys }) => {
+      let x = 8;
+      keys.forEach(([label, units]) => {
+        const w = Math.round(units * UNIT + (units - 1) * 0);
+        const accent = accentKeys[label];
+
+        // Key body
+        kx.fillStyle = '#2a2a2e';
+        kx.beginPath();
+        kx.roundRect(x, y, w - GAP, h - GAP, 4);
+        kx.fill();
+
+        // Top face highlight (gives 3D raised look)
+        kx.fillStyle = '#3a3a3f';
+        kx.beginPath();
+        kx.roundRect(x + 1, y + 1, w - GAP - 2, h - GAP - 5, 3);
+        kx.fill();
+
+        // Bottom shadow edge
+        kx.fillStyle = '#111114';
+        kx.beginPath();
+        kx.roundRect(x + 1, y + h - GAP - 4, w - GAP - 2, 3, [0, 0, 3, 3]);
+        kx.fill();
+
+        // Backlight glow tint on top face
+        const glowColor = accent ? accent + '22' : '#a0c4ff18';
+        kx.fillStyle = glowColor;
+        kx.beginPath();
+        kx.roundRect(x + 1, y + 1, w - GAP - 2, h - GAP - 5, 3);
+        kx.fill();
+
+        // Key label
+        if (label) {
+          const fontSize = label.length > 2 ? 9 : 12;
+          kx.font = `bold ${fontSize}px Arial, sans-serif`;
+          kx.fillStyle = accent || '#c8d8ff';
+          kx.textAlign = 'center';
+          kx.textBaseline = 'middle';
+          // Add subtle glow to label
+          kx.shadowColor = accent || '#a0c4ff';
+          kx.shadowBlur = accent ? 6 : 3;
+          kx.fillText(label, x + (w - GAP) / 2, y + (h - GAP) / 2 - 1);
+          kx.shadowBlur = 0;
+        }
+
+        x += w + 1;
+      });
+    });
+
+    // Touchpad area
+    kx.fillStyle = '#222226';
+    kx.beginPath();
+    kx.roundRect(340, 272, 200, 44, 6);
+    kx.fill();
+    kx.strokeStyle = '#3a3a44';
+    kx.lineWidth = 1;
+    kx.stroke();
+
+    const tex = new THREE.CanvasTexture(kc);
+    tex.flipY = false;
+    tex.minFilter = THREE.LinearFilter;
+    tex.magFilter = THREE.LinearFilter;
+    return tex;
+  }, []);
+
   // Create the dynamic 2D canvas texture
   const { canvas, ctx, screenTexture } = useMemo(() => {
     const canvas = document.createElement('canvas');
@@ -151,13 +273,14 @@ function LaptopModel(props) {
               bumpScale: 0.002,
             });
           } else if (matName === '03___Default') {
-            // Keyboard keys
+            // Keyboard — realistic texture with per-key labels and RGB lighting
             const kbMat = new THREE.MeshStandardMaterial({
-              color: new THREE.Color('#1c1c1c'),
-              roughness: 0.6,
-              metalness: 0.15,
+              map: keyboardTexture,
+              roughness: 0.55,
+              metalness: 0.1,
+              emissiveMap: keyboardTexture,
               emissive: new THREE.Color('#a0c4ff'),
-              emissiveIntensity: 0.25,
+              emissiveIntensity: 0.18,
             });
             child.material = kbMat;
             keyboardMatRef.current = kbMat;
@@ -167,7 +290,7 @@ function LaptopModel(props) {
     });
 
     return { centeredModel: model, scale: targetSize / maxDim };
-  }, [model, screenTexture, carbonBumpMap]);
+  }, [model, screenTexture, carbonBumpMap, keyboardTexture]);
 
   // Handle animation and canvas redrawing in the useFrame loop
   useFrame((state, delta) => {
