@@ -119,7 +119,7 @@ const Home = () => {
         id="hero"
         className="hero-section"
         style={{
-          backgroundColor: '#645452',
+          backgroundColor: '#8B8589',
           minHeight: '100vh',
           display: 'flex',
           alignItems: 'center'
@@ -141,14 +141,7 @@ const Home = () => {
               <p style={{ fontSize: '1.25rem', color: 'var(--navy-light)', marginBottom: '24px' }}>
                 {bio?.heroSubtitle || 'Full Stack Developer'}
               </p>
-              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                <a href="#projects" className="btn btn-save" style={{ padding: '12px 24px' }}>
-                  View Projects
-                </a>
-                <a href="#contact" className="btn btn-edit" style={{ padding: '12px 24px' }}>
-                  Contact Me
-                </a>
-              </div>
+
             </div>
 
             <div
