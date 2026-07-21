@@ -436,7 +436,7 @@ function LaptopModel(props) {
         grad.addColorStop(1, '#a855f7');
         ctx.fillStyle = grad;
         ctx.font = 'bold 54px Arial, sans-serif';
-        ctx.fillText("Hi, I'm Bereket VM", 120, heroY + 200);
+        ctx.fillText("Hi, I'm Bereket", 120, heroY + 200);
 
         // Subtitle
         ctx.fillStyle = '#94a3b8';
@@ -547,7 +547,7 @@ function LaptopModel(props) {
 
       ctx.fillStyle = '#ffffff';
       ctx.font = 'bold 22px Arial, sans-serif';
-      ctx.fillText('Bereket.dev', 120, 42);
+      ctx.fillText('Fullstack Web Developer', 120, 42);
 
       ctx.fillStyle = '#94a3b8';
       ctx.font = '15px Arial, sans-serif';
