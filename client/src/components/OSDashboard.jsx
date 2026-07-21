@@ -1112,7 +1112,7 @@ const OSSettings = () => {
   );
 };
 
-const OSDashboard = ({ bio, skills, projects }) => {
+const OSDashboard = ({ bio, skills, projects, isFullscreen, setIsFullscreen }) => {
   const { settings, updateSettings, resetSettings, availableWallpapers, getWallpaperColor } = useTheme();
   const [windows, setWindows] = useState([]);
   const [activeWindow, setActiveWindow] = useState(null);
@@ -1789,8 +1789,6 @@ const OSDashboard = ({ bio, skills, projects }) => {
       </div>
     );
   };
-
-  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const sortedStartMenuApps = [...startMenuApps].sort((a, b) => a.name.localeCompare(b.name));
   const groupedStartMenuApps = sortedStartMenuApps.reduce((acc, app) => {

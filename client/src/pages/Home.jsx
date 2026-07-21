@@ -16,6 +16,7 @@ const Home = () => {
     message: ''
   });
   const [formStatus, setFormStatus] = useState(null);
+  const [osOpen, setOsOpen] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -61,7 +62,7 @@ const Home = () => {
   return (
     <div className="home">
       {/* Windows 11 Desktop Overlay */}
-      <OSDashboard bio={bio} skills={skills} projects={projects} />
+      <OSDashboard bio={bio} skills={skills} projects={projects} isFullscreen={osOpen} setIsFullscreen={setOsOpen} />
 
       {/* Navbar */}
       <nav style={{
@@ -152,10 +153,13 @@ const Home = () => {
 
             <div
               className="hero-model"
+              onClick={() => setOsOpen(true)}
+              title="Click to open Portfolio OS"
               style={{
                 flex: '1 1 0',
                 minWidth: 0,
-                height: '480px'
+                height: '480px',
+                cursor: 'pointer'
               }}
             >
               <HeroLaptop />
@@ -195,8 +199,6 @@ const Home = () => {
           </div>
         </div>
         
-        {/* OS Desktop Overlay */}
-        <OSDashboard bio={bio} skills={skills} projects={projects} />
       </section>
 
       {/* Skills Section */}
