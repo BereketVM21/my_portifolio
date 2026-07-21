@@ -118,7 +118,7 @@ const Home = () => {
         id="hero"
         className="hero-section"
         style={{
-          backgroundColor: '#91A3B0',
+          backgroundColor: '#848482',
           minHeight: '100vh',
           display: 'flex',
           alignItems: 'center'
