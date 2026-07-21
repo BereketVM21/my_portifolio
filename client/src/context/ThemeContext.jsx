@@ -33,11 +33,11 @@ export const ThemeProvider = ({ children }) => {
     // Apply wallpaper
     const wallpaperColor = getWallpaperColor(settings.wallpaper);
     if (settings.darkMode) {
-      document.body.classList.remove('light-mode');
-      document.body.style.backgroundColor = wallpaperColor;
+       document.body.classList.remove('light-mode');
+       document.body.style.backgroundColor = wallpaperColor;
     } else {
-      document.body.classList.add('light-mode');
-      document.body.style.backgroundColor = '#F5F5F5';
+       document.body.classList.add('light-mode');
+       document.body.style.backgroundColor = '#9d9c9c';
     }
   }, [settings.brightness, settings.fontSize, settings.wallpaper, settings.darkMode, availableWallpapers]);
 

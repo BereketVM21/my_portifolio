@@ -1319,7 +1319,7 @@ const OSDashboard = ({ bio, skills, projects }) => {
       document.body.style.backgroundColor = wallpaperColor;
     } else {
       document.body.classList.add('light-mode');
-      document.body.style.backgroundColor = '#F5F5F5';
+      document.body.style.backgroundColor = '#9d9c9c';
     }
   }, [settings, getWallpaperColor]);
 

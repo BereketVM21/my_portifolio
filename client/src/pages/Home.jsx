@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../utils/api';
 import OSDashboard from '../components/OSDashboard';
+import HeroLaptop from '../components/HeroLaptop';
 
 const Home = () => {
   const [bio, setBio] = useState(null);
@@ -73,12 +74,11 @@ const Home = () => {
         justifyContent: 'flex-end',
         alignItems: 'center',
         padding: '16px 40px',
-        backgroundColor: 'rgba(0, 24, 48, 0.85)',
-        backdropFilter: 'blur(10px)',
-        borderBottom: '1px solid rgba(255,255,255,0.08)'
+        backgroundColor: 'transparent'
       }}>
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           {[
+            { label: 'Home', href: '#hero' },
             { label: 'About', href: '#about' },
             { label: 'Skills', href: '#skills' },
             { label: 'Projects', href: '#projects' },
@@ -90,63 +90,102 @@ const Home = () => {
               key={link.label}
               href={link.href}
               style={{
-                color: 'var(--text-secondary)',
+                color: '#3D0C02',
                 textDecoration: 'none',
                 padding: '8px 14px',
                 borderRadius: '4px',
                 fontSize: '14px',
-                fontWeight: '500',
+                fontWeight: 'bold',
                 transition: 'all 0.2s ease'
               }}
               onMouseEnter={e => {
-                e.currentTarget.style.color = '#fff';
-                e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)';
+                e.currentTarget.style.color = '#3D0C02';
+                e.currentTarget.style.backgroundColor = 'rgba(61, 12, 2, 0.1)';
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.color = 'var(--text-secondary)';
+                e.currentTarget.style.color = '#3D0C02';
                 e.currentTarget.style.backgroundColor = 'transparent';
               }}
             >
-              {link.label}
+              <strong>{link.label}</strong>
             </a>
           ))}
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="hero" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#BEBFC5' }}>
-        <div className="container text-center">
-          <h1 style={{ fontSize: '3.5rem', marginBottom: '16px' }}>{bio?.heroTitle || 'Welcome to My Portfolio'}</h1>
-          <p style={{ fontSize: '1.5rem', color: 'var(--text-secondary)', marginBottom: '32px' }}>
-            {bio?.heroSubtitle || 'Full Stack Developer'}
-          </p>
-          <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            {bio?.socialLinks?.github && (
-              <a href={bio.socialLinks.github} target="_blank" rel="noopener noreferrer" className="btn btn-edit">
-                GitHub
-              </a>
-            )}
-            {bio?.socialLinks?.linkedin && (
-              <a href={bio.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="btn btn-edit">
-                LinkedIn
-              </a>
-            )}
-            {bio?.socialLinks?.email && (
-              <a href={`mailto:${bio.socialLinks.email}`} className="btn btn-edit">
-                Email
-              </a>
-            )}
-            {bio?.resumeUrl && (
-              <a href={bio.resumeUrl} target="_blank" rel="noopener noreferrer" className="btn btn-edit">
-                Resume
-              </a>
-            )}
+      <section
+        id="hero"
+        className="hero-section"
+        style={{
+          backgroundColor: '#91A3B0',
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center'
+        }}
+      >
+        <div className="container">
+          <div
+            className="hero-grid"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '48px'
+            }}
+          >
+            <div className="hero-text" style={{ flex: '1 1 0', minWidth: 0 }}>
+              <h1 style={{ fontSize: '2.75rem', lineHeight: 1.15, marginBottom: '16px' }}>
+                {bio?.heroTitle || 'Welcome to My Portfolio'}
+              </h1>
+              <p style={{ fontSize: '1.25rem', color: 'var(--navy-light)', marginBottom: '24px' }}>
+                {bio?.heroSubtitle || 'Full Stack Developer'}
+              </p>
+              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                <a href="#projects" className="btn btn-save" style={{ padding: '12px 24px' }}>
+                  View Projects
+                </a>
+                <a href="#contact" className="btn btn-edit" style={{ padding: '12px 24px' }}>
+                  Contact Me
+                </a>
+              </div>
+            </div>
+
+            <div
+              className="hero-model"
+              style={{
+                flex: '1 1 0',
+                minWidth: 0,
+                height: '480px'
+              }}
+            >
+              <HeroLaptop />
+            </div>
           </div>
         </div>
+
+        <style>{`
+          @media (max-width: 900px) {
+            .hero-grid {
+              flex-direction: column;
+            }
+            .hero-model {
+              width: 100%;
+              height: 340px !important;
+              order: 2;
+            }
+            .hero-text {
+              order: 1;
+              text-align: center;
+            }
+            .hero-text > div {
+              justify-content: center;
+            }
+          }
+        `}</style>
       </section>
 
       {/* About Section with OS Desktop Overlay */}
-      <section id="about" style={{ backgroundColor: '#BEBFC5', position: 'relative', minHeight: '100vh' }}>
+      <section id="about" style={{ backgroundColor: '#9d9c9c', position: 'relative', minHeight: '100vh' }}>
         <div className="container">
           <h2 className="section-title">About Me</h2>
           <div className="card" style={{ maxWidth: '800px', margin: '0 auto', backgroundColor: 'var(--navy-primary)' }}>
@@ -161,7 +200,7 @@ const Home = () => {
       </section>
 
       {/* Skills Section */}
-      <section id="skills" style={{ backgroundColor: '#BEBFC5' }}>
+      <section id="skills" style={{ backgroundColor: '#9d9c9c' }}>
         <div className="container">
           <h2 className="section-title">Skills</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
@@ -203,7 +242,7 @@ const Home = () => {
       </section>
 
       {/* Projects Section */}
-      <section id="projects" style={{ backgroundColor: '#BEBFC5' }}>
+      <section id="projects" style={{ backgroundColor: '#9d9c9c' }}>
         <div className="container">
           <h2 className="section-title">Projects</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
@@ -258,7 +297,7 @@ const Home = () => {
       </section>
 
       {/* Experience Section */}
-      <section id="experience" style={{ backgroundColor: '#BEBFC5' }}>
+      <section id="experience" style={{ backgroundColor: '#9d9c9c' }}>
         <div className="container">
           <h2 className="section-title">Experience & Education</h2>
           <div style={{ maxWidth: '800px', margin: '0 auto' }}>
@@ -281,7 +320,7 @@ const Home = () => {
       </section>
 
       {/* Education Section */}
-      <section id="education" style={{ backgroundColor: '#BEBFC5' }}>
+      <section id="education" style={{ backgroundColor: '#9d9c9c' }}>
         <div className="container">
           <h2 className="section-title">Education</h2>
           <div style={{ maxWidth: '800px', margin: '0 auto' }}>
@@ -304,7 +343,7 @@ const Home = () => {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" style={{ backgroundColor: '#BEBFC5' }}>
+      <section id="contact" style={{ backgroundColor: '#9d9c9c' }}>
         <div className="container">
           <h2 className="section-title">Contact Me</h2>
           <div className="card" style={{ maxWidth: '600px', margin: '0 auto', backgroundColor: 'var(--navy-primary)' }}>
@@ -365,6 +404,28 @@ const Home = () => {
       {/* Footer */}
       <footer style={{ backgroundColor: 'var(--navy-dark)', padding: '40px 0', textAlign: 'center' }}>
         <div className="container">
+          <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '24px' }}>
+            {bio?.socialLinks?.github && (
+              <a href={bio.socialLinks.github} target="_blank" rel="noopener noreferrer" className="btn btn-edit">
+                GitHub
+              </a>
+            )}
+            {bio?.socialLinks?.linkedin && (
+              <a href={bio.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="btn btn-edit">
+                LinkedIn
+              </a>
+            )}
+            {bio?.socialLinks?.email && (
+              <a href={`mailto:${bio.socialLinks.email}`} className="btn btn-edit">
+                Email
+              </a>
+            )}
+            {bio?.resumeUrl && (
+              <a href={bio.resumeUrl} target="_blank" rel="noopener noreferrer" className="btn btn-edit">
+                Resume
+              </a>
+            )}
+          </div>
           <p className="text-muted">© {new Date().getFullYear()} Portfolio. All rights reserved.</p>
         </div>
       </footer>
