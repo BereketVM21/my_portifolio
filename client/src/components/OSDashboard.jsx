@@ -1800,36 +1800,6 @@ const OSDashboard = ({ bio, skills, projects, isFullscreen, setIsFullscreen }) =
 
   return (
     <>
-      {/* Small Screen Icon */}
-      {!isFullscreen && (
-        <div 
-          className="os-screen-icon"
-          onClick={() => setIsFullscreen(true)}
-          style={{
-            position: 'fixed',
-            bottom: '20px',
-            right: '20px',
-            width: '80px',
-            height: '80px',
-            background: 'linear-gradient(135deg, #0078d4 0%, #00bcf2 100%)',
-            border: '0.2px solid rgba(255,255,255,0.2)',
-            borderRadius: '16px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '40px',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
-            zIndex: 9999,
-            transition: 'all 0.3s ease'
-          }}
-          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
-          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-        >
-          🖥️
-        </div>
-      )}
-
       {/* Full Windows 11 Desktop */}
       {isFullscreen && (
         <div 
