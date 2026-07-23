@@ -4,6 +4,7 @@ import OSDashboard from '../components/OSDashboard';
 import HeroLaptop from '../components/HeroLaptop';
 import { Boxes } from '../components/BackgroundBoxes';
 import CRTBackground from '../components/CRTBackground';
+import { getSkillIcon } from '../utils/skillIcons';
 
 const Home = () => {
   const [bio, setBio] = useState(null);
@@ -452,46 +453,135 @@ const Home = () => {
           }}
         />
         <div className="container" style={{ position: 'relative', zIndex: 10 }}>
-          <h2 className="section-title" style={{ color: '#e2e8f0' }}>Skills</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
-            {['Frontend', 'Backend', 'Full Stack', 'Tools', 'Other'].map(category => {
-              const categorySkills = skills.filter(s => s.category === category);
-              if (categorySkills.length === 0) return null;
-              
-              return (
-                <div key={category} className="card" style={{
-                  backgroundColor: 'rgba(15, 23, 42, 0.7)',
-                  backdropFilter: 'blur(8px)',
-                  border: '1px solid rgba(148, 163, 184, 0.15)',
+          <h2 className="section-title" style={{ color: '#e2e8f0', marginBottom: '40px' }}>Skills</h2>
+          
+          {['Frontend', 'Backend', 'Full Stack', 'Tools', 'Other'].map(category => {
+            const categorySkills = skills.filter(s => s.category === category);
+            if (categorySkills.length === 0) return null;
+            
+            return (
+              <div key={category} style={{ marginBottom: '40px' }}>
+                <h3 style={{
+                  fontSize: '1.35rem',
+                  fontWeight: '700',
+                  color: '#93c5fd',
+                  marginBottom: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px'
                 }}>
-                  <h3 style={{ marginBottom: '16px', color: '#93c5fd' }}>{category}</h3>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    {categorySkills.map(skill => (
-                      <div key={skill._id}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                          <span style={{ color: '#e2e8f0' }}>{skill.name}</span>
-                          <span style={{ color: '#94a3b8' }}>{skill.proficiency}%</span>
+                  <span style={{
+                    width: '10px',
+                    height: '10px',
+                    borderRadius: '50%',
+                    backgroundColor: '#60a5fa',
+                    boxShadow: '0 0 8px #60a5fa'
+                  }} />
+                  {category}
+                </h3>
+
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+                  gap: '20px'
+                }}>
+                  {categorySkills.map(skill => (
+                    <div
+                      key={skill._id || skill.name}
+                      className="card skill-card"
+                      style={{
+                        backgroundColor: 'rgba(15, 23, 42, 0.75)',
+                        backdropFilter: 'blur(8px)',
+                        border: '1px solid rgba(148, 163, 184, 0.18)',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        gap: '16px',
+                        transition: 'transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'translateY(-4px)';
+                        e.currentTarget.style.borderColor = 'rgba(147, 197, 253, 0.4)';
+                        e.currentTarget.style.boxShadow = '0 8px 24px rgba(15, 23, 42, 0.6)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.borderColor = 'rgba(148, 163, 184, 0.18)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div style={{
+                          width: '46px',
+                          height: '46px',
+                          borderRadius: '10px',
+                          backgroundColor: 'rgba(30, 41, 59, 0.8)',
+                          border: '1px solid rgba(148, 163, 184, 0.2)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          padding: '8px',
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+                        }}>
+                          <img
+                            src={getSkillIcon(skill.name)}
+                            alt={skill.name}
+                            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.style.display = 'none';
+                              e.target.parentNode.innerText = '⚡';
+                              e.target.parentNode.style.color = '#93c5fd';
+                              e.target.parentNode.style.fontSize = '18px';
+                            }}
+                          />
                         </div>
-                        <div style={{ 
-                          height: '8px', 
-                          backgroundColor: 'rgba(30, 41, 59, 0.8)', 
+
+                        <span style={{
+                          fontSize: '0.75rem',
+                          fontWeight: '600',
+                          padding: '3px 10px',
+                          borderRadius: '20px',
+                          backgroundColor: 'rgba(147, 197, 253, 0.1)',
+                          color: '#93c5fd',
+                          border: '1px solid rgba(147, 197, 253, 0.2)',
+                        }}>
+                          {skill.category || category}
+                        </span>
+                      </div>
+
+                      <div>
+                        <h4 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#f1f5f9', marginBottom: '8px' }}>
+                          {skill.name}
+                        </h4>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                          <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Proficiency</span>
+                          <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#93c5fd' }}>{skill.proficiency}%</span>
+                        </div>
+                        <div style={{
+                          height: '8px',
+                          width: '100%',
+                          backgroundColor: 'rgba(30, 41, 59, 0.9)',
                           borderRadius: '4px',
-                          overflow: 'hidden'
+                          overflow: 'hidden',
                         }}>
                           <div style={{
                             height: '100%',
                             width: `${skill.proficiency}%`,
-                            background: 'linear-gradient(90deg, #93c5fd, #a5b4fc)',
-                            transition: 'width 0.3s ease'
+                            background: 'linear-gradient(90deg, #3b82f6, #8b5cf6)',
+                            borderRadius: '4px',
+                            transition: 'width 0.6s ease',
                           }} />
                         </div>
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
                 </div>
-              );
-            })}
-          </div>
+              </div>
+            );
+          })}
         </div>
       </section>
 
