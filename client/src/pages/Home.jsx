@@ -3,6 +3,7 @@ import { api } from '../utils/api';
 import OSDashboard from '../components/OSDashboard';
 import HeroLaptop from '../components/HeroLaptop';
 import { Boxes } from '../components/BackgroundBoxes';
+import CRTBackground from '../components/CRTBackground';
 
 const Home = () => {
   const [bio, setBio] = useState(null);
@@ -108,7 +109,8 @@ const Home = () => {
         justifyContent: 'flex-end',
         alignItems: 'center',
         padding: '16px 40px',
-        backgroundColor: 'transparent'
+        backgroundColor: 'rgba(15, 23, 42, 0.4)',
+        backdropFilter: 'blur(8px)',
       }}>
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           {[
@@ -122,7 +124,7 @@ const Home = () => {
               key={link.label}
               href={link.href}
               style={{
-                color: '#3D0C02',
+                color: '#e2e8f0',
                 textDecoration: 'none',
                 padding: '8px 14px',
                 borderRadius: '4px',
@@ -131,11 +133,11 @@ const Home = () => {
                 transition: 'all 0.2s ease'
               }}
               onMouseEnter={e => {
-                e.currentTarget.style.color = '#3D0C02';
-                e.currentTarget.style.backgroundColor = 'rgba(61, 12, 2, 0.1)';
+                e.currentTarget.style.color = '#ffffff';
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.color = '#3D0C02';
+                e.currentTarget.style.color = '#e2e8f0';
                 e.currentTarget.style.backgroundColor = 'transparent';
               }}
             >
@@ -145,21 +147,35 @@ const Home = () => {
         </div>
       </nav>
 
-      {/* Hero Section */}
+      {/* Hero Section — CRT shader background */}
       <section
         id="hero"
         className="hero-section"
         style={{
-          backgroundColor: '#91A3B0',
+          backgroundColor: '#0a0a0f',
           minHeight: '100vh',
           display: 'flex',
           alignItems: 'center',
           paddingTop: '120px',
           paddingBottom: '60px',
-          position: 'relative'
+          position: 'relative',
+          overflow: 'hidden',
         }}
       >
-        <div className="container">
+        {/* CRT Canvas — covers entire hero, sits behind everything */}
+        <CRTBackground />
+        {/* Subtle overlay for text readability */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 1,
+            background: 'linear-gradient(135deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.55) 100%)',
+            pointerEvents: 'none',
+          }}
+        />
+
+        <div className="container" style={{ position: 'relative', zIndex: 2 }}>
           <div
             className="hero-grid"
             style={{
@@ -170,27 +186,29 @@ const Home = () => {
           >
             <div className="hero-text" style={{ flex: '1 1 0', minWidth: 0, position: 'relative', display: 'flex', flexDirection: 'column', alignSelf: 'stretch' }}>
               <div style={{
-                color: '#3D2B1F',
+                color: '#f1f5f9',
                 fontSize: '5rem',
                 fontWeight: '900',
                 letterSpacing: '0.04em',
-                opacity: 0.92,
+                opacity: 0.95,
                 whiteSpace: 'nowrap',
+                textShadow: '0 2px 20px rgba(0,0,0,0.5)',
               }}>
                 Bereket Alemu
               </div>
               <div style={{
-                color: '#800020',
+                color: '#f97316',
                 fontSize: '2rem',
                 fontWeight: '700',
                 letterSpacing: '0.04em',
-                opacity: 0.92,
+                opacity: 0.95,
                 marginTop: '8px',
+                textShadow: '0 2px 12px rgba(249, 115, 22, 0.3)',
               }}>
                 Full Stack Developer
               </div>
               <div style={{
-                color: '#2C1810',
+                color: '#cbd5e1',
                 fontSize: '1.15rem',
                 fontWeight: '400',
                 fontFamily: '"Georgia", "Palatino Linotype", "Book Antiqua", serif',
@@ -198,7 +216,7 @@ const Home = () => {
                 lineHeight: '1.7',
                 marginTop: '20px',
                 maxWidth: '520px',
-                opacity: 0.88,
+                opacity: 0.9,
                 letterSpacing: '0.02em',
               }}>
                 I build modern, responsive and scalable web applications with MERN stack and bring ideas to life on the web.
@@ -239,18 +257,18 @@ const Home = () => {
                     display: 'inline-block',
                     padding: '12px 34px',
                     backgroundColor: 'transparent',
-                    color: '#C04000',
+                    color: '#f97316',
                     fontSize: '1.05rem',
                     fontWeight: '700',
                     fontFamily: '"Segoe UI", Arial, sans-serif',
                     textDecoration: 'none',
                     borderRadius: '8px',
-                    border: '2px solid #C04000',
+                    border: '2px solid #f97316',
                     cursor: 'pointer',
                     transition: 'all 0.25s ease',
                     letterSpacing: '0.04em',
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(192, 64, 0, 0.08)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                  onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(249, 115, 22, 0.12)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
                   onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.transform = 'translateY(0)'; }}
                 >
                   View My Work
@@ -300,15 +318,17 @@ const Home = () => {
           bottom: '0',
           left: '0',
           right: '0',
-          backgroundColor: 'rgba(61, 12, 2, 0.05)',
+          zIndex: 3,
+          backgroundColor: 'rgba(0, 0, 0, 0.35)',
+          backdropFilter: 'blur(4px)',
           padding: '16px 40px',
           display: 'flex',
           alignItems: 'center',
           gap: '20px',
-          borderTop: '1px solid rgba(61, 12, 2, 0.1)'
+          borderTop: '1px solid rgba(255, 255, 255, 0.08)'
         }}>
           <div style={{
-            color: '#3D2B1F',
+            color: '#94a3b8',
             fontSize: '1rem',
             fontWeight: '700',
             letterSpacing: '0.04em',
@@ -338,14 +358,14 @@ const Home = () => {
                     width: '38px',
                     height: '38px',
                     objectFit: 'contain',
-                    filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.15))',
+                    filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.4))',
                     background: tech.name === 'Express' ? '#ffffff' : 'transparent',
                     borderRadius: tech.name === 'Express' ? '6px' : '0',
                     padding: tech.name === 'Express' ? '4px' : '0',
                   }}
                 />
                 <span style={{
-                  color: '#3D2B1F',
+                  color: '#e2e8f0',
                   fontSize: '1rem',
                   fontWeight: '600',
                 }}>
