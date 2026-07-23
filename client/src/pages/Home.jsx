@@ -18,22 +18,38 @@ const SkillsInteractiveRow = ({ items, direction = 'left-to-right', renderCard }
     if (!el) return;
 
     const singleSetWidth = el.scrollWidth / 4;
-    if (direction === 'right-to-left' && el.scrollLeft === 0) {
+    
+    // Position appropriately on mount
+    if (el.scrollLeft === 0) {
       el.scrollLeft = singleSetWidth * 2;
     }
 
     let animId;
-    const speed = direction === 'left-to-right' ? 1.0 : -1.0;
+    let lastTime = performance.now();
+    
+    // Constant speed in pixels per second
+    const pixelsPerSecond = 45;
 
-    const animate = () => {
+    const animate = (now) => {
+      const delta = (now - lastTime) / 1000;
+      lastTime = now;
+
       if (!isHoveredRef.current && !isDraggingRef.current && el) {
-        el.scrollLeft += speed;
+        const moveAmount = pixelsPerSecond * (delta > 0.1 ? 0.016 : delta);
+
+        // Left-to-Right moves cards right by decreasing scrollLeft
+        // Right-to-Left moves cards left by increasing scrollLeft
+        if (direction === 'left-to-right') {
+          el.scrollLeft -= moveAmount;
+        } else {
+          el.scrollLeft += moveAmount;
+        }
 
         const maxScroll = el.scrollWidth - el.clientWidth;
-        if (el.scrollLeft >= maxScroll - 10) {
-          el.scrollLeft = singleSetWidth;
-        } else if (el.scrollLeft <= 10) {
+        if (el.scrollLeft <= 10) {
           el.scrollLeft = singleSetWidth * 2;
+        } else if (el.scrollLeft >= maxScroll - 10) {
+          el.scrollLeft = singleSetWidth;
         }
       }
       animId = requestAnimationFrame(animate);
@@ -46,8 +62,13 @@ const SkillsInteractiveRow = ({ items, direction = 'left-to-right', renderCard }
   const handleWheel = (e) => {
     const el = containerRef.current;
     if (!el) return;
-    const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-    el.scrollLeft += delta * 0.8;
+    const wheelDelta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    
+    // Match motion direction:
+    // For 'left-to-right': scrolling down pushes cards right (-scrollLeft)
+    // For 'right-to-left': scrolling down pushes cards left (+scrollLeft)
+    const factor = direction === 'left-to-right' ? -1 : 1;
+    el.scrollLeft += wheelDelta * 0.8 * factor;
   };
 
   const handleMouseDown = (e) => {
