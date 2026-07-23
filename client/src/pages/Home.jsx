@@ -1,10 +1,108 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { api } from '../utils/api';
 import OSDashboard from '../components/OSDashboard';
 import HeroLaptop from '../components/HeroLaptop';
 import { Boxes } from '../components/BackgroundBoxes';
 import CRTBackground from '../components/CRTBackground';
 import { getSkillIcon } from '../utils/skillIcons';
+
+const SkillsInteractiveRow = ({ items, direction = 'left-to-right', renderCard }) => {
+  const containerRef = useRef(null);
+  const isHoveredRef = useRef(false);
+  const isDraggingRef = useRef(false);
+  const startXRef = useRef(0);
+  const startScrollLeftRef = useRef(0);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const singleSetWidth = el.scrollWidth / 4;
+    if (direction === 'right-to-left' && el.scrollLeft === 0) {
+      el.scrollLeft = singleSetWidth * 2;
+    }
+
+    let animId;
+    const speed = direction === 'left-to-right' ? 1.0 : -1.0;
+
+    const animate = () => {
+      if (!isHoveredRef.current && !isDraggingRef.current && el) {
+        el.scrollLeft += speed;
+
+        const maxScroll = el.scrollWidth - el.clientWidth;
+        if (el.scrollLeft >= maxScroll - 10) {
+          el.scrollLeft = singleSetWidth;
+        } else if (el.scrollLeft <= 10) {
+          el.scrollLeft = singleSetWidth * 2;
+        }
+      }
+      animId = requestAnimationFrame(animate);
+    };
+
+    animId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animId);
+  }, [direction]);
+
+  const handleWheel = (e) => {
+    const el = containerRef.current;
+    if (!el) return;
+    const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    el.scrollLeft += delta * 0.8;
+  };
+
+  const handleMouseDown = (e) => {
+    isDraggingRef.current = true;
+    startXRef.current = e.pageX - containerRef.current.offsetLeft;
+    startScrollLeftRef.current = containerRef.current.scrollLeft;
+  };
+
+  const handleMouseLeave = () => {
+    isHoveredRef.current = false;
+    isDraggingRef.current = false;
+  };
+
+  const handleMouseUp = () => {
+    isDraggingRef.current = false;
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDraggingRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - containerRef.current.offsetLeft;
+    const walk = (x - startXRef.current) * 1.5;
+    containerRef.current.scrollLeft = startScrollLeftRef.current - walk;
+  };
+
+  return (
+    <div
+      ref={containerRef}
+      className="skills-scroll-row"
+      onMouseEnter={() => { isHoveredRef.current = true; }}
+      onMouseLeave={handleMouseLeave}
+      onWheel={handleWheel}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+      onMouseMove={handleMouseMove}
+      style={{
+        overflowX: 'auto',
+        overflowY: 'hidden',
+        width: '100%',
+        position: 'relative',
+        padding: '12px 0',
+        cursor: isDraggingRef.current ? 'grabbing' : 'grab',
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none',
+        maskImage: 'linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)',
+        WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)',
+        userSelect: 'none',
+      }}
+    >
+      <div style={{ display: 'flex', gap: '24px', width: 'max-content' }}>
+        {items.map((item, idx) => renderCard(item, idx))}
+      </div>
+    </div>
+  );
+};
 
 const Home = () => {
   const [bio, setBio] = useState(null);
@@ -454,7 +552,7 @@ const Home = () => {
         const displaySkills = skills && skills.length > 0 ? skills : defaultSkillsList;
         const halfLength = Math.ceil(displaySkills.length / 2);
         const row1Base = displaySkills.slice(0, halfLength);
-        const row2Base = displaySkills.slice(halfLength.length > 0 ? halfLength : 0);
+        const row2Base = displaySkills.slice(halfLength);
 
         // Quadruplicate to guarantee smooth infinite scrolling on large screens
         const row1Skills = [...row1Base, ...row1Base, ...row1Base, ...row1Base];
@@ -477,7 +575,7 @@ const Home = () => {
               justifyContent: 'space-between',
               gap: '16px',
               transition: 'transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease',
-              cursor: 'pointer',
+              cursor: 'grab',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
@@ -579,66 +677,29 @@ const Home = () => {
                 <h2 className="section-title" style={{ color: '#e2e8f0', margin: 0 }}>Skills & Technologies</h2>
               </div>
 
-              {/* Dual Paired Moving Marquee Rows */}
+              {/* Dual Paired Interactive Moving Marquee Rows */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%' }}>
                 
-                {/* Top Row: Left to Right */}
-                <div className="skills-marquee-row">
-                  <div className="skills-marquee-track track-left-to-right">
-                    {row1Skills.map((skill, idx) => renderMarqueeCard(skill, `r1-${idx}`))}
-                  </div>
-                </div>
+                {/* Top Row: Left to Right (auto-scroll + hover-pause + wheel/drag manual scroll) */}
+                <SkillsInteractiveRow
+                  items={row1Skills}
+                  direction="left-to-right"
+                  renderCard={(skill, idx) => renderMarqueeCard(skill, `r1-${idx}`)}
+                />
 
-                {/* Bottom Row: Right to Left */}
-                <div className="skills-marquee-row">
-                  <div className="skills-marquee-track track-right-to-left">
-                    {row2Skills.map((skill, idx) => renderMarqueeCard(skill, `r2-${idx}`))}
-                  </div>
-                </div>
+                {/* Bottom Row: Right to Left (auto-scroll + hover-pause + wheel/drag manual scroll) */}
+                <SkillsInteractiveRow
+                  items={row2Skills}
+                  direction="right-to-left"
+                  renderCard={(skill, idx) => renderMarqueeCard(skill, `r2-${idx}`)}
+                />
 
               </div>
             </div>
 
             <style>{`
-              .skills-marquee-row {
-                overflow: hidden;
-                width: 100%;
-                position: relative;
-                padding: 10px 0;
-                mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
-                -webkit-mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
-              }
-
-              .skills-marquee-track {
-                display: flex;
-                gap: 24px;
-                width: max-content;
-                will-change: transform;
-              }
-
-              /* Top row moves Left to Right */
-              .track-left-to-right {
-                animation: marqueeL2R 38s linear infinite;
-              }
-
-              /* Bottom row moves Right to Left */
-              .track-right-to-left {
-                animation: marqueeR2L 38s linear infinite;
-              }
-
-              /* Hovering over either row stops movement for that row */
-              .skills-marquee-row:hover .skills-marquee-track {
-                animation-play-state: paused !important;
-              }
-
-              @keyframes marqueeL2R {
-                0% { transform: translateX(-50%); }
-                100% { transform: translateX(0%); }
-              }
-
-              @keyframes marqueeR2L {
-                0% { transform: translateX(0%); }
-                100% { transform: translateX(-50%); }
+              .skills-scroll-row::-webkit-scrollbar {
+                display: none;
               }
             `}</style>
           </section>
