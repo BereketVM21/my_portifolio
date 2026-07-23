@@ -435,155 +435,215 @@ const Home = () => {
       </section>
 
       {/* Skills Section with BackgroundBoxes */}
-      <section id="skills" style={{ position: 'relative', overflow: 'hidden', backgroundColor: '#0f172a' }}>
-        {/* Animated Boxes background */}
-        <Boxes />
-        {/* Radial mask overlay */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            backgroundColor: '#0f172a',
-            zIndex: 1,
-            WebkitMaskImage: 'radial-gradient(transparent, white)',
-            maskImage: 'radial-gradient(transparent, white)',
-            pointerEvents: 'none',
-          }}
-        />
-        <div className="container" style={{ position: 'relative', zIndex: 10 }}>
-          <h2 className="section-title" style={{ color: '#e2e8f0', marginBottom: '40px' }}>Skills</h2>
-          
-          {['Frontend', 'Backend', 'Full Stack', 'Tools', 'Other'].map(category => {
-            const categorySkills = skills.filter(s => s.category === category);
-            if (categorySkills.length === 0) return null;
-            
-            return (
-              <div key={category} style={{ marginBottom: '40px' }}>
-                <h3 style={{
-                  fontSize: '1.35rem',
-                  fontWeight: '700',
-                  color: '#93c5fd',
-                  marginBottom: '20px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px'
-                }}>
-                  <span style={{
-                    width: '10px',
-                    height: '10px',
-                    borderRadius: '50%',
-                    backgroundColor: '#60a5fa',
-                    boxShadow: '0 0 8px #60a5fa'
-                  }} />
-                  {category}
-                </h3>
+      {(() => {
+        const defaultSkillsList = [
+          { name: 'React', category: 'Frontend', proficiency: 90 },
+          { name: 'JavaScript', category: 'Frontend', proficiency: 92 },
+          { name: 'HTML/CSS', category: 'Frontend', proficiency: 95 },
+          { name: 'Node.js', category: 'Backend', proficiency: 88 },
+          { name: 'Express', category: 'Backend', proficiency: 85 },
+          { name: 'MongoDB', category: 'Backend', proficiency: 82 },
+          { name: 'Git', category: 'Tools', proficiency: 90 },
+          { name: 'VS Code', category: 'Tools', proficiency: 95 },
+          { name: 'TypeScript', category: 'Frontend', proficiency: 85 },
+          { name: 'Tailwind CSS', category: 'Frontend', proficiency: 90 },
+          { name: 'Python', category: 'Backend', proficiency: 80 },
+          { name: 'Docker', category: 'Tools', proficiency: 75 },
+        ];
 
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-                  gap: '20px'
-                }}>
-                  {categorySkills.map(skill => (
-                    <div
-                      key={skill._id || skill.name}
-                      className="card skill-card"
-                      style={{
-                        backgroundColor: 'rgba(15, 23, 42, 0.75)',
-                        backdropFilter: 'blur(8px)',
-                        border: '1px solid rgba(148, 163, 184, 0.18)',
-                        borderRadius: '12px',
-                        padding: '20px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'space-between',
-                        gap: '16px',
-                        transition: 'transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = 'translateY(-4px)';
-                        e.currentTarget.style.borderColor = 'rgba(147, 197, 253, 0.4)';
-                        e.currentTarget.style.boxShadow = '0 8px 24px rgba(15, 23, 42, 0.6)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.borderColor = 'rgba(148, 163, 184, 0.18)';
-                        e.currentTarget.style.boxShadow = 'none';
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <div style={{
-                          width: '46px',
-                          height: '46px',
-                          borderRadius: '10px',
-                          backgroundColor: 'rgba(30, 41, 59, 0.8)',
-                          border: '1px solid rgba(148, 163, 184, 0.2)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          padding: '8px',
-                          boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
-                        }}>
-                          <img
-                            src={getSkillIcon(skill.name)}
-                            alt={skill.name}
-                            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                            onError={(e) => {
-                              e.target.onerror = null;
-                              e.target.style.display = 'none';
-                              e.target.parentNode.innerText = '⚡';
-                              e.target.parentNode.style.color = '#93c5fd';
-                              e.target.parentNode.style.fontSize = '18px';
-                            }}
-                          />
-                        </div>
+        const displaySkills = skills && skills.length > 0 ? skills : defaultSkillsList;
+        const halfLength = Math.ceil(displaySkills.length / 2);
+        const row1Base = displaySkills.slice(0, halfLength);
+        const row2Base = displaySkills.slice(halfLength.length > 0 ? halfLength : 0);
 
-                        <span style={{
-                          fontSize: '0.75rem',
-                          fontWeight: '600',
-                          padding: '3px 10px',
-                          borderRadius: '20px',
-                          backgroundColor: 'rgba(147, 197, 253, 0.1)',
-                          color: '#93c5fd',
-                          border: '1px solid rgba(147, 197, 253, 0.2)',
-                        }}>
-                          {skill.category || category}
-                        </span>
-                      </div>
+        // Quadruplicate to guarantee smooth infinite scrolling on large screens
+        const row1Skills = [...row1Base, ...row1Base, ...row1Base, ...row1Base];
+        const row2Skills = [...row2Base, ...row2Base, ...row2Base, ...row2Base];
 
-                      <div>
-                        <h4 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#f1f5f9', marginBottom: '8px' }}>
-                          {skill.name}
-                        </h4>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                          <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Proficiency</span>
-                          <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#93c5fd' }}>{skill.proficiency}%</span>
-                        </div>
-                        <div style={{
-                          height: '8px',
-                          width: '100%',
-                          backgroundColor: 'rgba(30, 41, 59, 0.9)',
-                          borderRadius: '4px',
-                          overflow: 'hidden',
-                        }}>
-                          <div style={{
-                            height: '100%',
-                            width: `${skill.proficiency}%`,
-                            background: 'linear-gradient(90deg, #3b82f6, #8b5cf6)',
-                            borderRadius: '4px',
-                            transition: 'width 0.6s ease',
-                          }} />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+        const renderMarqueeCard = (skill, idxKey) => (
+          <div
+            key={idxKey}
+            className="card skill-card"
+            style={{
+              width: '260px',
+              flexShrink: 0,
+              backgroundColor: 'rgba(15, 23, 42, 0.8)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(148, 163, 184, 0.18)',
+              borderRadius: '14px',
+              padding: '20px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              gap: '16px',
+              transition: 'transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease',
+              cursor: 'pointer',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
+              e.currentTarget.style.borderColor = 'rgba(147, 197, 253, 0.5)';
+              e.currentTarget.style.boxShadow = '0 10px 30px rgba(15, 23, 42, 0.9), 0 0 15px rgba(147, 197, 253, 0.2)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0) scale(1)';
+              e.currentTarget.style.borderColor = 'rgba(148, 163, 184, 0.18)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{
+                width: '46px',
+                height: '46px',
+                borderRadius: '10px',
+                backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                border: '1px solid rgba(148, 163, 184, 0.2)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '8px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
+              }}>
+                <img
+                  src={getSkillIcon(skill.name)}
+                  alt={skill.name}
+                  style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.style.display = 'none';
+                    e.target.parentNode.innerText = '⚡';
+                    e.target.parentNode.style.color = '#93c5fd';
+                    e.target.parentNode.style.fontSize = '18px';
+                  }}
+                />
               </div>
-            );
-          })}
-        </div>
-      </section>
+
+              <span style={{
+                fontSize: '0.75rem',
+                fontWeight: '600',
+                padding: '3px 10px',
+                borderRadius: '20px',
+                backgroundColor: 'rgba(147, 197, 253, 0.12)',
+                color: '#93c5fd',
+                border: '1px solid rgba(147, 197, 253, 0.25)',
+              }}>
+                {skill.category || 'Skill'}
+              </span>
+            </div>
+
+            <div>
+              <h4 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#f1f5f9', marginBottom: '8px' }}>
+                {skill.name}
+              </h4>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Proficiency</span>
+                <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#93c5fd' }}>{skill.proficiency}%</span>
+              </div>
+              <div style={{
+                height: '8px',
+                width: '100%',
+                backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                borderRadius: '4px',
+                overflow: 'hidden',
+              }}>
+                <div style={{
+                  height: '100%',
+                  width: `${skill.proficiency}%`,
+                  background: 'linear-gradient(90deg, #3b82f6, #8b5cf6)',
+                  borderRadius: '4px',
+                }} />
+              </div>
+            </div>
+          </div>
+        );
+
+        return (
+          <section id="skills" style={{ position: 'relative', overflow: 'hidden', backgroundColor: '#0f172a', padding: '90px 0' }}>
+            {/* Animated Boxes background */}
+            <Boxes />
+            {/* Radial mask overlay */}
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                width: '100%',
+                height: '100%',
+                backgroundColor: '#0f172a',
+                zIndex: 1,
+                WebkitMaskImage: 'radial-gradient(transparent, white)',
+                maskImage: 'radial-gradient(transparent, white)',
+                pointerEvents: 'none',
+              }}
+            />
+            <div style={{ position: 'relative', zIndex: 10, width: '100%' }}>
+              <div className="container" style={{ marginBottom: '30px' }}>
+                <h2 className="section-title" style={{ color: '#e2e8f0', margin: 0 }}>Skills & Technologies</h2>
+              </div>
+
+              {/* Dual Paired Moving Marquee Rows */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%' }}>
+                
+                {/* Top Row: Left to Right */}
+                <div className="skills-marquee-row">
+                  <div className="skills-marquee-track track-left-to-right">
+                    {row1Skills.map((skill, idx) => renderMarqueeCard(skill, `r1-${idx}`))}
+                  </div>
+                </div>
+
+                {/* Bottom Row: Right to Left */}
+                <div className="skills-marquee-row">
+                  <div className="skills-marquee-track track-right-to-left">
+                    {row2Skills.map((skill, idx) => renderMarqueeCard(skill, `r2-${idx}`))}
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <style>{`
+              .skills-marquee-row {
+                overflow: hidden;
+                width: 100%;
+                position: relative;
+                padding: 10px 0;
+                mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+                -webkit-mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+              }
+
+              .skills-marquee-track {
+                display: flex;
+                gap: 24px;
+                width: max-content;
+                will-change: transform;
+              }
+
+              /* Top row moves Left to Right */
+              .track-left-to-right {
+                animation: marqueeL2R 38s linear infinite;
+              }
+
+              /* Bottom row moves Right to Left */
+              .track-right-to-left {
+                animation: marqueeR2L 38s linear infinite;
+              }
+
+              /* Hovering over either row stops movement for that row */
+              .skills-marquee-row:hover .skills-marquee-track {
+                animation-play-state: paused !important;
+              }
+
+              @keyframes marqueeL2R {
+                0% { transform: translateX(-50%); }
+                100% { transform: translateX(0%); }
+              }
+
+              @keyframes marqueeR2L {
+                0% { transform: translateX(0%); }
+                100% { transform: translateX(-50%); }
+              }
+            `}</style>
+          </section>
+        );
+      })()}
 
       {/* Projects Section with BackgroundBoxes */}
       <section id="projects" style={{ position: 'relative', overflow: 'hidden', backgroundColor: '#0f172a' }}>
