@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { api } from '../utils/api';
 import OSDashboard from '../components/OSDashboard';
 import HeroLaptop from '../components/HeroLaptop';
-import { Boxes } from '../components/BackgroundBoxes';
 
 const Home = () => {
   const [bio, setBio] = useState(null);
@@ -18,42 +17,10 @@ const Home = () => {
   });
   const [formStatus, setFormStatus] = useState(null);
   const [osOpen, setOsOpen] = useState(false);
-  const [visibleTechCount, setVisibleTechCount] = useState(0);
-  const [cycleStartTime, setCycleStartTime] = useState(Date.now());
-
-  const technologies = [
-    { name: 'HTML5', icon: 'html5/html5-original' },
-    { name: 'CSS3', icon: 'css3/css3-original' },
-    { name: 'JavaScript', icon: 'javascript/javascript-original' },
-    { name: 'React', icon: 'react/react-original' },
-    { name: 'Node.js', icon: 'nodejs/nodejs-original' },
-    { name: 'Express', icon: 'express/express-original' },
-    { name: 'MongoDB', icon: 'mongodb/mongodb-original' },
-  ];
 
   useEffect(() => {
     fetchData();
   }, []);
-
-  useEffect(() => {
-    // Start the animation immediately
-    const startTime = Date.now();
-    
-    const interval = setInterval(() => {
-      const elapsed = Date.now() - startTime;
-      const techIndex = Math.floor(elapsed / 1000);
-      
-      if (techIndex < technologies.length) {
-        setVisibleTechCount(techIndex + 1);
-      } else if (elapsed >= 12000) {
-        // Reset after 12 seconds from first display
-        setCycleStartTime(Date.now());
-        setVisibleTechCount(0);
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [technologies.length]);
 
   const fetchData = async () => {
     try {
@@ -151,12 +118,11 @@ const Home = () => {
         className="hero-section"
         style={{
           backgroundColor: '#91A3B0',
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          paddingTop: '120px',
-          paddingBottom: '60px',
-          position: 'relative'
+                minHeight: '100vh',
+                display: 'flex',
+                alignItems: 'center',
+                paddingTop: '120px',
+                paddingBottom: '60px'
         }}
       >
         <div className="container">
@@ -267,100 +233,16 @@ const Home = () => {
                 minWidth: 0,
                 height: '480px',
                 cursor: 'pointer',
-                background: '#0f172a',
+                background: '#91A3B0',
                 borderRadius: '12px',
-                position: 'relative',
-                overflow: 'hidden',
               }}
             >
-              {/* Animated background grid — Aceternity BackgroundBoxes */}
-              <Boxes />
-              {/* Radial mask so edges fade into the container background */}
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  zIndex: 1,
-                  background: 'radial-gradient(ellipse at center, transparent 40%, #0f172a 80%)',
-                  pointerEvents: 'none',
-                  borderRadius: '12px',
-                }}
-              />
-              {/* Laptop on top of the grid */}
-              <div style={{ position: 'relative', zIndex: 2, width: '100%', height: '100%' }}>
-                <HeroLaptop />
-              </div>
+              <HeroLaptop />
             </div>
           </div>
         </div>
 
-        {/* Technologies ticker at bottom */}
-        <div style={{
-          position: 'absolute',
-          bottom: '0',
-          left: '0',
-          right: '0',
-          backgroundColor: 'rgba(61, 12, 2, 0.05)',
-          padding: '16px 40px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '20px',
-          borderTop: '1px solid rgba(61, 12, 2, 0.1)'
-        }}>
-          <div style={{
-            color: '#3D2B1F',
-            fontSize: '1rem',
-            fontWeight: '700',
-            letterSpacing: '0.04em',
-            textTransform: 'uppercase',
-            opacity: 0.85,
-            whiteSpace: 'nowrap'
-          }}>
-            Technologies I Work With
-          </div>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '18px'
-          }}>
-            {technologies.slice(0, visibleTechCount).map((tech, index) => (
-              <div key={tech.name} style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                animation: `fadeIn 0.5s ease-in ${index * 0.1}s both`
-              }}>
-                <img
-                  src={`https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${tech.icon}.svg`}
-                  alt={tech.name}
-                  title={tech.name}
-                  style={{
-                    width: '38px',
-                    height: '38px',
-                    objectFit: 'contain',
-                    filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.15))',
-                    background: tech.name === 'Express' ? '#ffffff' : 'transparent',
-                    borderRadius: tech.name === 'Express' ? '6px' : '0',
-                    padding: tech.name === 'Express' ? '4px' : '0',
-                  }}
-                />
-                <span style={{
-                  color: '#3D2B1F',
-                  fontSize: '1rem',
-                  fontWeight: '600',
-                }}>
-                  {tech.name}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
         <style>{`
-          @keyframes fadeIn {
-            from { opacity: 0; transform: translateX(-10px); }
-            to { opacity: 1; transform: translateX(0); }
-          }
           @media (max-width: 900px) {
             .hero-grid {
               flex-direction: column;
@@ -378,34 +260,12 @@ const Home = () => {
         `}</style>
       </section>
 
-      {/* About Section with BackgroundBoxes */}
-      <section id="about" style={{ position: 'relative', minHeight: '100vh', overflow: 'hidden', backgroundColor: '#0f172a' }}>
-        {/* Animated Boxes background */}
-        <Boxes />
-        {/* Radial mask overlay */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            backgroundColor: '#0f172a',
-            zIndex: 1,
-            WebkitMaskImage: 'radial-gradient(transparent, white)',
-            maskImage: 'radial-gradient(transparent, white)',
-            pointerEvents: 'none',
-          }}
-        />
-        <div className="container" style={{ position: 'relative', zIndex: 10 }}>
-          <h2 className="section-title" style={{ color: '#e2e8f0' }}>About Me</h2>
-          <div className="card" style={{
-            maxWidth: '800px',
-            margin: '0 auto',
-            backgroundColor: 'rgba(15, 23, 42, 0.7)',
-            backdropFilter: 'blur(8px)',
-            border: '1px solid rgba(148, 163, 184, 0.15)',
-          }}>
-            <p style={{ fontSize: '1.1rem', lineHeight: '1.8', color: '#cbd5e1' }}>
+      {/* About Section with OS Desktop Overlay */}
+      <section id="about" style={{ backgroundColor: '#BEBFC5', position: 'relative', minHeight: '100vh' }}>
+        <div className="container">
+          <h2 className="section-title">About Me</h2>
+          <div className="card" style={{ maxWidth: '800px', margin: '0 auto', backgroundColor: 'var(--navy-primary)' }}>
+            <p style={{ fontSize: '1.1rem', lineHeight: '1.8' }}>
               {bio?.aboutMe || 'A passionate developer creating amazing web experiences.'}
             </p>
           </div>
@@ -413,55 +273,35 @@ const Home = () => {
         
       </section>
 
-      {/* Skills Section with BackgroundBoxes */}
-      <section id="skills" style={{ position: 'relative', overflow: 'hidden', backgroundColor: '#0f172a' }}>
-        {/* Animated Boxes background */}
-        <Boxes />
-        {/* Radial mask overlay */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            backgroundColor: '#0f172a',
-            zIndex: 1,
-            WebkitMaskImage: 'radial-gradient(transparent, white)',
-            maskImage: 'radial-gradient(transparent, white)',
-            pointerEvents: 'none',
-          }}
-        />
-        <div className="container" style={{ position: 'relative', zIndex: 10 }}>
-          <h2 className="section-title" style={{ color: '#e2e8f0' }}>Skills</h2>
+      {/* Skills Section */}
+      <section id="skills" style={{ backgroundColor: '#BEBFC5' }}>
+        <div className="container">
+          <h2 className="section-title">Skills</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
             {['Frontend', 'Backend', 'Full Stack', 'Tools', 'Other'].map(category => {
               const categorySkills = skills.filter(s => s.category === category);
               if (categorySkills.length === 0) return null;
               
               return (
-                <div key={category} className="card" style={{
-                  backgroundColor: 'rgba(15, 23, 42, 0.7)',
-                  backdropFilter: 'blur(8px)',
-                  border: '1px solid rgba(148, 163, 184, 0.15)',
-                }}>
-                  <h3 style={{ marginBottom: '16px', color: '#93c5fd' }}>{category}</h3>
+                <div key={category} className="card" style={{ backgroundColor: 'var(--navy-primary)' }}>
+                  <h3 style={{ marginBottom: '16px', color: 'var(--navy-light)' }}>{category}</h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     {categorySkills.map(skill => (
                       <div key={skill._id}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                          <span style={{ color: '#e2e8f0' }}>{skill.name}</span>
-                          <span style={{ color: '#94a3b8' }}>{skill.proficiency}%</span>
+                          <span>{skill.name}</span>
+                          <span className="text-muted">{skill.proficiency}%</span>
                         </div>
                         <div style={{ 
                           height: '8px', 
-                          backgroundColor: 'rgba(30, 41, 59, 0.8)', 
+                          backgroundColor: 'var(--navy-primary)', 
                           borderRadius: '4px',
                           overflow: 'hidden'
                         }}>
                           <div style={{
                             height: '100%',
                             width: `${skill.proficiency}%`,
-                            background: 'linear-gradient(90deg, #93c5fd, #a5b4fc)',
+                            backgroundColor: 'var(--navy-light)',
                             transition: 'width 0.3s ease'
                           }} />
                         </div>
@@ -475,33 +315,13 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Projects Section with BackgroundBoxes */}
-      <section id="projects" style={{ position: 'relative', overflow: 'hidden', backgroundColor: '#0f172a' }}>
-        {/* Animated Boxes background */}
-        <Boxes />
-        {/* Radial mask overlay */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            backgroundColor: '#0f172a',
-            zIndex: 1,
-            WebkitMaskImage: 'radial-gradient(transparent, white)',
-            maskImage: 'radial-gradient(transparent, white)',
-            pointerEvents: 'none',
-          }}
-        />
-        <div className="container" style={{ position: 'relative', zIndex: 10 }}>
-          <h2 className="section-title" style={{ color: '#e2e8f0' }}>Work</h2>
+      {/* Projects Section */}
+      <section id="projects" style={{ backgroundColor: '#BEBFC5' }}>
+        <div className="container">
+          <h2 className="section-title">Work</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
             {projects.map(project => (
-              <div key={project._id} className="card" style={{
-                backgroundColor: 'rgba(15, 23, 42, 0.7)',
-                backdropFilter: 'blur(8px)',
-                border: '1px solid rgba(148, 163, 184, 0.15)',
-              }}>
+              <div key={project._id} className="card" style={{ backgroundColor: 'var(--navy-primary)' }}>
                 {project.imageUrl && (
                   <img 
                     src={project.imageUrl} 
@@ -515,19 +335,17 @@ const Home = () => {
                     }}
                   />
                 )}
-                <h3 style={{ marginBottom: '8px', color: '#e2e8f0' }}>{project.title}</h3>
-                <p style={{ marginBottom: '16px', color: '#94a3b8' }}>{project.description}</p>
+                <h3 style={{ marginBottom: '8px' }}>{project.title}</h3>
+                <p className="text-muted" style={{ marginBottom: '16px' }}>{project.description}</p>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '16px' }}>
                   {project.technologies.map(tech => (
                     <span 
                       key={tech}
                       style={{
                         padding: '4px 8px',
-                        backgroundColor: 'rgba(147, 197, 253, 0.1)',
-                        color: '#93c5fd',
+                        backgroundColor: 'var(--navy-primary)',
                         borderRadius: '4px',
-                        fontSize: '12px',
-                        border: '1px solid rgba(147, 197, 253, 0.2)',
+                        fontSize: '12px'
                       }}
                     >
                       {tech}
@@ -552,92 +370,50 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Contact Section with BackgroundBoxes */}
-      <section id="contact" style={{ position: 'relative', overflow: 'hidden', backgroundColor: '#0f172a' }}>
-        {/* Animated Boxes background */}
-        <Boxes />
-        {/* Radial mask overlay */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            backgroundColor: '#0f172a',
-            zIndex: 1,
-            WebkitMaskImage: 'radial-gradient(transparent, white)',
-            maskImage: 'radial-gradient(transparent, white)',
-            pointerEvents: 'none',
-          }}
-        />
-        <div className="container" style={{ position: 'relative', zIndex: 10 }}>
-          <h2 className="section-title" style={{ color: '#e2e8f0' }}>Contact Me</h2>
-          <div className="card" style={{
-            maxWidth: '600px',
-            margin: '0 auto',
-            backgroundColor: 'rgba(15, 23, 42, 0.7)',
-            backdropFilter: 'blur(8px)',
-            border: '1px solid rgba(148, 163, 184, 0.15)',
-          }}>
+      {/* Contact Section */}
+      <section id="contact" style={{ backgroundColor: '#BEBFC5' }}>
+        <div className="container">
+          <h2 className="section-title">Contact Me</h2>
+          <div className="card" style={{ maxWidth: '600px', margin: '0 auto', backgroundColor: 'var(--navy-primary)' }}>
             <form onSubmit={handleContactSubmit}>
               <div style={{ marginBottom: '16px' }}>
-                <label htmlFor="name" style={{ color: '#94a3b8' }}>Name</label>
+                <label htmlFor="name">Name</label>
                 <input
                   id="name"
                   type="text"
                   value={contactForm.name}
                   onChange={(e) => setContactForm({...contactForm, name: e.target.value})}
                   required
-                  style={{
-                    backgroundColor: 'rgba(30, 41, 59, 0.8)',
-                    color: '#e2e8f0',
-                    border: '1px solid rgba(148, 163, 184, 0.2)',
-                  }}
                 />
               </div>
               <div style={{ marginBottom: '16px' }}>
-                <label htmlFor="email" style={{ color: '#94a3b8' }}>Email</label>
+                <label htmlFor="email">Email</label>
                 <input
                   id="email"
                   type="email"
                   value={contactForm.email}
                   onChange={(e) => setContactForm({...contactForm, email: e.target.value})}
                   required
-                  style={{
-                    backgroundColor: 'rgba(30, 41, 59, 0.8)',
-                    color: '#e2e8f0',
-                    border: '1px solid rgba(148, 163, 184, 0.2)',
-                  }}
                 />
               </div>
               <div style={{ marginBottom: '16px' }}>
-                <label htmlFor="subject" style={{ color: '#94a3b8' }}>Subject</label>
+                <label htmlFor="subject">Subject</label>
                 <input
                   id="subject"
                   type="text"
                   value={contactForm.subject}
                   onChange={(e) => setContactForm({...contactForm, subject: e.target.value})}
                   required
-                  style={{
-                    backgroundColor: 'rgba(30, 41, 59, 0.8)',
-                    color: '#e2e8f0',
-                    border: '1px solid rgba(148, 163, 184, 0.2)',
-                  }}
                 />
               </div>
               <div style={{ marginBottom: '16px' }}>
-                <label htmlFor="message" style={{ color: '#94a3b8' }}>Message</label>
+                <label htmlFor="message">Message</label>
                 <textarea
                   id="message"
                   rows="5"
                   value={contactForm.message}
                   onChange={(e) => setContactForm({...contactForm, message: e.target.value})}
                   required
-                  style={{
-                    backgroundColor: 'rgba(30, 41, 59, 0.8)',
-                    color: '#e2e8f0',
-                    border: '1px solid rgba(148, 163, 184, 0.2)',
-                  }}
                 />
               </div>
               <button type="submit" className="btn btn-save" style={{ width: '100%' }}>

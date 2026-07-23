@@ -21,11 +21,12 @@
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #9d9c9c;
+  background-color: #09090b; /* Tailwind neutral-950 — matches MagicUI dark:bg-neutral-950 */
   color: var(--text-primary);
   line-height: 1.6;
   min-height: 100vh;
   transition: var(--transition);
+  position: relative;
 }
 
 /* Light Mode Support */
