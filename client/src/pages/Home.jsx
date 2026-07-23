@@ -7,112 +7,73 @@ import CRTBackground from '../components/CRTBackground';
 import { getSkillIcon } from '../utils/skillIcons';
 
 const SkillsInteractiveRow = ({ items, direction = 'left-to-right', renderCard }) => {
-  const containerRef = useRef(null);
-  const isHoveredRef = useRef(false);
+  const [userOffset, setUserOffset] = useState(0);
   const isDraggingRef = useRef(false);
   const startXRef = useRef(0);
-  const startScrollLeftRef = useRef(0);
-
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-
-    const singleSetWidth = el.scrollWidth / 4;
-    if (direction === 'right-to-left' && el.scrollLeft === 0) {
-      el.scrollLeft = singleSetWidth * 2;
-    }
-
-    let pos = el.scrollLeft;
-    let lastTime = performance.now();
-    let animId;
-
-    // Constant speed: 45 pixels per second
-    const pixelsPerSecond = 45;
-    const dirSign = direction === 'left-to-right' ? 1 : -1;
-
-    const animate = (now) => {
-      const dt = (now - lastTime) / 1000;
-      lastTime = now;
-
-      if (!isHoveredRef.current && !isDraggingRef.current && el) {
-        pos += dirSign * pixelsPerSecond * Math.min(dt, 0.1);
-
-        const maxScroll = el.scrollWidth - el.clientWidth;
-        if (pos >= maxScroll - 10) {
-          pos -= singleSetWidth;
-        } else if (pos <= 10) {
-          pos += singleSetWidth;
-        }
-
-        el.scrollLeft = pos;
-      } else if (el) {
-        // Keep position tracker synced during manual user scroll/drag
-        pos = el.scrollLeft;
-      }
-
-      animId = requestAnimationFrame(animate);
-    };
-
-    animId = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animId);
-  }, [direction]);
+  const startOffsetRef = useRef(0);
 
   const handleWheel = (e) => {
-    const el = containerRef.current;
-    if (!el) return;
     const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-    el.scrollLeft += delta * 0.8;
+    setUserOffset((prev) => prev - delta * 0.7);
   };
 
   const handleMouseDown = (e) => {
     isDraggingRef.current = true;
-    startXRef.current = e.pageX - containerRef.current.offsetLeft;
-    startScrollLeftRef.current = containerRef.current.scrollLeft;
+    startXRef.current = e.clientX;
+    startOffsetRef.current = userOffset;
   };
 
-  const handleMouseLeave = () => {
-    isHoveredRef.current = false;
-    isDraggingRef.current = false;
+  const handleMouseMove = (e) => {
+    if (!isDraggingRef.current) return;
+    e.preventDefault();
+    const diff = e.clientX - startXRef.current;
+    setUserOffset(startOffsetRef.current + diff);
   };
 
   const handleMouseUp = () => {
     isDraggingRef.current = false;
   };
 
-  const handleMouseMove = (e) => {
-    if (!isDraggingRef.current) return;
-    e.preventDefault();
-    const x = e.pageX - containerRef.current.offsetLeft;
-    const walk = (x - startXRef.current) * 1.5;
-    containerRef.current.scrollLeft = startScrollLeftRef.current - walk;
+  const handleMouseLeave = () => {
+    isDraggingRef.current = false;
   };
 
   return (
     <div
-      ref={containerRef}
-      className="skills-scroll-row"
-      onMouseEnter={() => { isHoveredRef.current = true; }}
-      onMouseLeave={handleMouseLeave}
+      className="skills-marquee-wrapper"
       onWheel={handleWheel}
       onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
       onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseLeave}
       style={{
-        overflowX: 'auto',
-        overflowY: 'hidden',
+        overflow: 'hidden',
         width: '100%',
         position: 'relative',
-        padding: '12px 0',
+        padding: '14px 0',
         cursor: isDraggingRef.current ? 'grabbing' : 'grab',
-        scrollbarWidth: 'none',
-        msOverflowStyle: 'none',
+        userSelect: 'none',
         maskImage: 'linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)',
         WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)',
-        userSelect: 'none',
       }}
     >
-      <div style={{ display: 'flex', gap: '24px', width: 'max-content' }}>
-        {items.map((item, idx) => renderCard(item, idx))}
+      <div
+        style={{
+          transform: `translate3d(${userOffset}px, 0, 0)`,
+          transition: isDraggingRef.current ? 'none' : 'transform 0.15s cubic-bezier(0.2, 0, 0, 1)',
+        }}
+      >
+        <div
+          className={`skills-gpu-track ${direction === 'left-to-right' ? 'track-l2r' : 'track-r2l'}`}
+          style={{
+            display: 'flex',
+            gap: '24px',
+            width: 'max-content',
+            willChange: 'transform',
+          }}
+        >
+          {items.map((item, idx) => renderCard(item, idx))}
+        </div>
       </div>
     </div>
   );
@@ -712,8 +673,34 @@ const Home = () => {
             </div>
 
             <style>{`
-              .skills-scroll-row::-webkit-scrollbar {
-                display: none;
+              .track-l2r {
+                animation: gpuMarqueeL2R 42s linear infinite;
+              }
+
+              .track-r2l {
+                animation: gpuMarqueeR2L 42s linear infinite;
+              }
+
+              .skills-marquee-wrapper:hover .skills-gpu-track {
+                animation-play-state: paused !important;
+              }
+
+              @keyframes gpuMarqueeL2R {
+                0% {
+                  transform: translate3d(-50%, 0, 0);
+                }
+                100% {
+                  transform: translate3d(0%, 0, 0);
+                }
+              }
+
+              @keyframes gpuMarqueeR2L {
+                0% {
+                  transform: translate3d(0%, 0, 0);
+                }
+                100% {
+                  transform: translate3d(-50%, 0, 0);
+                }
               }
             `}</style>
           </section>
